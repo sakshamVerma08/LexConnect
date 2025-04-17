@@ -15,6 +15,7 @@ import CaseList from './components/cases/CaseList';
 import CaseDetails from './components/cases/CaseDetails';
 import DocumentScanner from './components/scanner/DocumentScanner';
 import FindLawyers from './components/pages/FindLawyers';
+import LegalChatbot from './components/pages/LegalChatbot';
 
 function App() {
   // Get initial theme from localStorage or default to light
@@ -140,6 +141,7 @@ function App() {
           <Route path="/lawyers" element={<FindLawyers />} />
           <Route path="/case/:id" element={<CaseDetails />} />
           <Route path="/document-scanner" element={<DocumentScanner />} />
+          <Route path="/legal-chatbot" element={<LegalChatbot toggleColorMode={toggleColorMode} />} />
         </Routes>
       </Router>
     </ThemeProvider>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes dash {
+      to { stroke-dashoffset: 0; }
+    }
+    .floating { animation: float 3s ease-in-out infinite; }
+    .pulsing { animation: pulse 2s ease-in-out infinite; }
+    .rotating { animation: rotate 20s linear infinite; }
+    .connecting-line { 
+      stroke-dasharray: 8;
+      stroke-dashoffset: 16;
+      animation: dash 1s linear infinite;
+    }
+    .gradient-circle { animation: pulse 3s ease-in-out infinite; }
+  </style>
+
+  <!-- Background Elements -->
+  <circle cx="400" cy="300" r="250" fill="url(#paint0_radial)" fill-opacity="0.1" class="gradient-circle"/>
+  
+  <!-- Main Illustration -->
+  <g transform="translate(200, 100)">
+    <!-- Lawyer Figure -->
+    <g class="floating">
+      <path d="M150 300C150 234.48 203.48 181 269 181C334.52 181 388 234.48 388 300V400H150V300Z" fill="url(#lawyer-gradient)"/>
+      <circle cx="269" cy="250" r="50" fill="url(#lawyer-gradient)"/>
+    </g>
+    
+    <!-- Client Figure -->
+    <g class="floating" style="animation-delay: 0.5s">
+      <path d="M450 300C450 234.48 503.48 181 569 181C634.52 181 688 234.48 688 300V400H450V300Z" fill="url(#client-gradient)"/>
+      <circle cx="569" cy="250" r="50" fill="url(#client-gradient)"/>
+    </g>
+    
+    <!-- Connection Line -->
+    <path d="M388 300L450 300" stroke="url(#connection-gradient)" stroke-width="4" class="connecting-line"/>
+    
+    <!-- Document Icons -->
+    <g class="pulsing" style="animation-delay: 0.2s">
+      <rect x="100" y="420" width="80" height="100" rx="8" fill="url(#document-gradient-1)" fill-opacity="0.2"/>
+      <rect x="120" y="440" width="40" height="4" rx="2" fill="url(#document-gradient-1)"/>
+      <rect x="120" y="460" width="40" height="4" rx="2" fill="url(#document-gradient-1)"/>
+      <rect x="120" y="480" width="40" height="4" rx="2" fill="url(#document-gradient-1)"/>
+    </g>
+    
+    <g class="pulsing" style="animation-delay: 0.4s">
+      <rect x="600" y="420" width="80" height="100" rx="8" fill="url(#document-gradient-2)" fill-opacity="0.2"/>
+      <rect x="620" y="440" width="40" height="4" rx="2" fill="url(#document-gradient-2)"/>
+      <rect x="620" y="460" width="40" height="4" rx="2" fill="url(#document-gradient-2)"/>
+      <rect x="620" y="480" width="40" height="4" rx="2" fill="url(#document-gradient-2)"/>
+    </g>
+  </g>
+  
+  <!-- Decorative Elements -->
+  <g class="rotating">
+    <circle cx="100" cy="100" r="30" fill="url(#decorative-gradient-1)" fill-opacity="0.1"/>
+    <circle cx="700" cy="500" r="40" fill="url(#decorative-gradient-2)" fill-opacity="0.1"/>
+    <circle cx="650" cy="100" r="25" fill="url(#decorative-gradient-3)" fill-opacity="0.1"/>
+    <circle cx="150" cy="500" r="35" fill="url(#decorative-gradient-4)" fill-opacity="0.1"/>
+  </g>
+  
+  <defs>
+    <!-- Main Background Gradient -->
+    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(400 300) rotate(90) scale(250)">
+      <stop stop-color="#3B82F6"/>
+      <stop offset="0.5" stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#EC4899" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Lawyer Gradient -->
+    <linearGradient id="lawyer-gradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="50%" stop-color="#60A5FA"/>
+      <stop offset="100%" stop-color="#93C5FD"/>
+    </linearGradient>
+
+    <!-- Client Gradient -->
+    <linearGradient id="client-gradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#8B5CF6"/>
+      <stop offset="50%" stop-color="#A78BFA"/>
+      <stop offset="100%" stop-color="#C4B5FD"/>
+    </linearGradient>
+
+    <!-- Connection Gradient -->
+    <linearGradient id="connection-gradient" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="50%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#EC4899"/>
+    </linearGradient>
+
+    <!-- Document Gradients -->
+    <linearGradient id="document-gradient-1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#60A5FA"/>
+    </linearGradient>
+
+    <linearGradient id="document-gradient-2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#A78BFA"/>
+    </linearGradient>
+
+    <!-- Decorative Gradients -->
+    <linearGradient id="decorative-gradient-1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#60A5FA"/>
+    </linearGradient>
+
+    <linearGradient id="decorative-gradient-2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#A78BFA"/>
+    </linearGradient>
+
+    <linearGradient id="decorative-gradient-3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#EC4899"/>
+      <stop offset="100%" stop-color="#F472B6"/>
+    </linearGradient>
+
+    <linearGradient id="decorative-gradient-4" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#34D399"/>
+    </linearGradient>
+  </defs>
+</svg> 
