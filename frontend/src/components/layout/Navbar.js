@@ -32,9 +32,11 @@ import {
   Dashboard,
   Settings,
   Chat,
+  Brightness4,
+  Brightness7,
 } from '@mui/icons-material';
 
-const Navbar = () => {
+const Navbar = ({ toggleColorMode }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -80,10 +82,16 @@ const Navbar = () => {
       color: '#10B981',
     },
     {
+      text: 'Document Scanner',
+      icon: <Description />,
+      path: '/document-scanner',
+      color: '#F59E0B',
+    },
+    {
       text: 'Legal AI Assistant',
       icon: <Chat />,
       path: '/legal-chatbot',
-      color: '#F59E0B',
+      color: '#6366F1',
     },
   ];
 
@@ -253,6 +261,19 @@ const Navbar = () => {
           <>
             {renderDesktopMenu()}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <IconButton 
+                onClick={toggleColorMode}
+                color="inherit"
+                sx={{
+                  '&:hover': {
+                    background: theme.palette.mode === 'light'
+                      ? 'rgba(0, 0, 0, 0.04)'
+                      : 'rgba(255, 255, 255, 0.08)',
+                  },
+                }}
+              >
+                {theme.palette.mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
+              </IconButton>
               <Avatar
                 sx={{
                   cursor: 'pointer',
