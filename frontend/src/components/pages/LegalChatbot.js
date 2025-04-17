@@ -14,15 +14,14 @@ import {
   DialogContent,
   DialogActions,
   useTheme,
-  IconButton,
   AppBar,
   Toolbar,
 } from '@mui/material';
-import { Send as SendIcon, Brightness4, Brightness7 } from '@mui/icons-material';
+import { Send as SendIcon } from '@mui/icons-material';
 
 const AI_RESPONSE_KEY = 'AIzaSyBswUJc4oun9uKIzC4w0h6AbshdB1KRbXQ';
 
-export default function LegalChatbot({ toggleColorMode }) {
+export default function LegalChatbot() {
     const [messages, setMessages] = useState([]);
     const [inputMessage, setInputMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -91,18 +90,12 @@ export default function LegalChatbot({ toggleColorMode }) {
 
     return (
         <Box sx={{ flexGrow: 1 }}>
-            {/* App Bar with Theme Toggle */}
+            {/* App Bar without Theme Toggle */}
             <AppBar position="static" color="default" elevation={1}>
                 <Toolbar>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         Legal AI Assistant
                     </Typography>
-                    <IconButton 
-                        onClick={toggleColorMode}
-                        color="inherit"
-                    >
-                        {theme.palette.mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
-                    </IconButton>
                 </Toolbar>
             </AppBar>
 
@@ -257,4 +250,4 @@ export default function LegalChatbot({ toggleColorMode }) {
             </Container>
         </Box>
     );
-} 
+}
