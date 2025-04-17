@@ -27,7 +27,7 @@ const Home = () => {
               Browse Cases
             </Button>
           </Box>
-          <Box sx={{ mt: 4, display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Box sx={{ mt: 4, display: 'flex', gap: 2, alignItems: 'center' }}>
             <TextField
               variant="outlined"
               placeholder="Search lawyers"
@@ -84,51 +84,6 @@ const Home = () => {
           </Grid>
         </Grid>
       </Container>
-
-      {/* How It Works Section */}
-      <Box sx={{ bgcolor: 'grey.100', py: 8 }}>
-        <Container maxWidth="lg">
-          <Typography variant="h4" align="center" gutterBottom>How It Works</Typography>
-          <Grid container spacing={4}>
-            <Grid item xs={12} md={4}>
-              <Card><CardContent><Typography variant="h5">1. Sign Up</Typography><Typography>Create a free client or lawyer account.</Typography></CardContent></Card>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Card><CardContent><Typography variant="h5">2. Find Lawyers</Typography><Typography>Search by specialty and filter Pro Bono options.</Typography></CardContent></Card>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Card><CardContent><Typography variant="h5">3. Connect & Consult</Typography><Typography>Message lawyers and schedule consultations.</Typography></CardContent></Card>
-            </Grid>
-          </Grid>
-        </Container>
-      </Box>
-
-      {/* Featured Lawyers Section */}
-      <Box sx={{ bgcolor: 'grey.50', py: 8 }}>
-        <Container maxWidth="lg">
-          <Typography variant="h4" align="center" gutterBottom>Featured Lawyers</Typography>
-          <Grid container spacing={4}>
-            {[
-              { id: '1', name: 'Alice Johnson', specialization: 'Intellectual Property', type: 'proBono' },
-              { id: '2', name: 'Bob Smith', specialization: 'Family Law', type: 'paid' },
-              { id: '3', name: 'Clara Lee', specialization: 'Corporate Law', type: 'proBono' },
-              { id: '4', name: 'David Kim', specialization: 'Criminal Law', type: 'paid' }
-            ].map((lawyer) => (
-              <Grid item xs={12} sm={6} md={3} key={lawyer.id}>
-                <Card>
-                  <CardContent sx={{ textAlign: 'center' }}>
-                    <Avatar sx={{ bgcolor: 'primary.main', width: 64, height: 64, mx: 'auto' }}>{lawyer.name.charAt(0)}</Avatar>
-                    <Typography variant="h6" sx={{ mt: 1 }}>{lawyer.name}</Typography>
-                    <Typography variant="body2" color="text.secondary">{lawyer.specialization}</Typography>
-                    <Chip label={lawyer.type === 'proBono' ? 'Pro Bono' : 'Paid'} color={lawyer.type === 'proBono' ? 'success' : 'primary'} size="small" sx={{ mt: 1 }} />
-                    <Button variant="outlined" size="small" sx={{ mt: 1 }} onClick={() => navigate(`/lawyer/profile/${lawyer.id}`)}>View Profile</Button>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
-      </Box>
     </Box>
   );
 };

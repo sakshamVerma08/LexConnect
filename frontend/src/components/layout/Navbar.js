@@ -15,9 +15,11 @@ import {
 } from '@mui/material';
 import GavelIcon from '@mui/icons-material/Gavel';
 import MenuIcon from '@mui/icons-material/Menu';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 import { useNavigate } from 'react-router-dom';
 
-const Navbar = () => {
+const Navbar = ({ toggleColorMode }) => {
   const navigate = useNavigate();
   const theme = useTheme();
   const [anchorElNav, setAnchorElNav] = useState(null);
@@ -30,8 +32,7 @@ const Navbar = () => {
   const pages = [
     { title: 'Find Lawyers', path: '/lawyers' },
     { title: 'Browse Cases', path: '/cases' },
-    { title: 'Document Scanner', path: '/document-scanner' },
-    { title: 'How It Works', path: '/how-it-works' }
+    { title: 'Document Scanner', path: '/document-scanner' }
   ];
 
   const handleOpenNavMenu = (event) => {
@@ -56,7 +57,7 @@ const Navbar = () => {
   };
 
   return (
-    <AppBar position="sticky" sx={{ backgroundColor: 'white', color: 'text.primary' }}>
+    <AppBar position="sticky">
       <Container maxWidth="lg">
         <Toolbar disableGutters>
           {/* Logo - Desktop */}
@@ -113,10 +114,7 @@ const Navbar = () => {
               }}
             >
               {pages.map((page) => (
-                <MenuItem 
-                  key={page.title} 
-                  onClick={() => handleMenuClick(page.path)}
-                >
+                <MenuItem key={page.title} onClick={() => handleMenuClick(page.path)}>
                   <Typography textAlign="center">{page.title}</Typography>
                 </MenuItem>
               ))}
@@ -148,12 +146,33 @@ const Navbar = () => {
               <Button
                 key={page.title}
                 onClick={() => handleMenuClick(page.path)}
-                sx={{ my: 2, color: 'text.primary', display: 'block' }}
+                sx={{ 
+                  my: 2, 
+                  color: theme.palette.text.primary,
+                  display: 'block',
+                  '&:hover': {
+                    color: theme.palette.primary.main,
+                  }
+                }}
               >
                 {page.title}
               </Button>
             ))}
           </Box>
+
+          {/* Dark Mode Toggle */}
+          <IconButton 
+            onClick={toggleColorMode} 
+            color="inherit"
+            sx={{ 
+              mr: 2,
+              '&:hover': {
+                color: theme.palette.primary.main,
+              }
+            }}
+          >
+            {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+          </IconButton>
 
           {/* User Menu */}
           <Box sx={{ flexGrow: 0 }}>
@@ -180,16 +199,10 @@ const Navbar = () => {
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
                 >
-                  <MenuItem onClick={() => handleMenuClick('/dashboard')}>
-                    <Typography textAlign="center">Dashboard</Typography>
-                  </MenuItem>
-                  <MenuItem onClick={() => handleMenuClick('/profile')}>
+                  <MenuItem onClick={handleCloseUserMenu}>
                     <Typography textAlign="center">Profile</Typography>
                   </MenuItem>
-                  <MenuItem onClick={() => handleMenuClick('/settings')}>
-                    <Typography textAlign="center">Settings</Typography>
-                  </MenuItem>
-                  <MenuItem onClick={() => {/* TODO: Implement logout */}}>
+                  <MenuItem onClick={handleCloseUserMenu}>
                     <Typography textAlign="center">Logout</Typography>
                   </MenuItem>
                 </Menu>
@@ -198,8 +211,15 @@ const Navbar = () => {
               <Box sx={{ display: 'flex', gap: 2 }}>
                 <Button
                   variant="outlined"
-                  color="primary"
+                  color="inherit"
                   onClick={() => navigate('/login')}
+                  sx={{
+                    borderColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.23)' : 'rgba(0, 0, 0, 0.23)',
+                    '&:hover': {
+                      borderColor: theme.palette.primary.main,
+                      backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
+                    }
+                  }}
                 >
                   Login
                 </Button>
@@ -207,6 +227,11 @@ const Navbar = () => {
                   variant="contained"
                   color="primary"
                   onClick={() => navigate('/register')}
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: theme.palette.primary.dark,
+                    }
+                  }}
                 >
                   Sign Up
                 </Button>
