@@ -1,0 +1,18 @@
+Error: Error processing document with Gemini AI
+Stack: Error: Error processing document with Gemini AI
+    at processWithGemini (file:///C:/Users/dell/OneDrive/Desktop/LexHack/backend/routes/documentScanner.js:157:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async file:///C:/Users/dell/OneDrive/Desktop/LexHack/backend/routes/documentScanner.js:189:22
+Request: {
+  "body": {},
+  "file": {
+    "fieldname": "document",
+    "originalname": "FullStack Ai Engineer.pdf",
+    "encoding": "7bit",
+    "mimetype": "application/pdf",
+    "destination": "uploads",
+    "filename": "1744871422782-FullStack Ai Engineer.pdf",
+    "path": "uploads\\1744871422782-FullStack Ai Engineer.pdf",
+    "size": 104022
+  }
+}
