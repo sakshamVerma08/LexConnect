@@ -131,9 +131,9 @@ function App() {
       <Router>
         <Navbar toggleColorMode={toggleColorMode} />
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/" element={<Register />} />
           <Route path="/lawyer/dashboard" element={<LawyerDashboard />} />
           <Route path="/client/dashboard" element={<ClientDashboard />} />
           <Route path="/lawyer/profile/:id" element={<LawyerProfile />} />

@@ -60,7 +60,7 @@ const Navbar = ({ toggleColorMode }) => {
     {
       text: 'Home',
       icon: <Home />,
-      path: '/',
+      path: '/home',
       color: '#3B82F6',
     },
     {
@@ -78,7 +78,7 @@ const Navbar = ({ toggleColorMode }) => {
     {
       text: 'Dashboard',
       icon: <Dashboard />,
-      path: '/dashboard',
+      path: '/client/dashboard',
       color: '#10B981',
     },
     {

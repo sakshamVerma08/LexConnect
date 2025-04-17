@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -41,6 +41,30 @@ export default function DocumentScanner() {
   const fileInputRef = useRef(null);
   const videoRef = useRef(null);
   const [stream, setStream] = useState(null);
+  const workerRef = useRef(null);
+
+  useEffect(() => {
+    // Initialize Tesseract worker when component mounts
+    const initializeWorker = async () => {
+      try {
+        workerRef.current = await Tesseract.createWorker();
+        await workerRef.current.loadLanguage(language);
+        await workerRef.current.initialize(language);
+      } catch (err) {
+        console.error('Worker initialization error:', err);
+        setError('Failed to initialize OCR engine. Please refresh the page.');
+      }
+    };
+
+    initializeWorker();
+
+    // Cleanup worker when component unmounts
+    return () => {
+      if (workerRef.current) {
+        workerRef.current.terminate();
+      }
+    };
+  }, [language]);
 
   const languages = [
     { code: 'eng', name: 'English' },
@@ -50,22 +74,131 @@ export default function DocumentScanner() {
     { code: 'deu', name: 'German' },
   ];
 
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) { // 5MB limit
-        setError('File size should be less than 5MB');
-        return;
+  const preprocessImage = (imageData) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Set canvas size
+        canvas.width = img.width;
+        canvas.height = img.height;
+        
+        // Apply rotation
+        ctx.translate(canvas.width/2, canvas.height/2);
+        ctx.rotate(rotation * Math.PI / 180);
+        ctx.translate(-canvas.width/2, -canvas.height/2);
+        
+        // Draw image
+        ctx.drawImage(img, 0, 0);
+        
+        // Apply image processing for better OCR
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+        
+        // Increase contrast
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+          
+          // Convert to grayscale
+          const gray = (r + g + b) / 3;
+          
+          // Increase contrast
+          const contrast = 1.5;
+          const factor = (259 * (contrast + 255)) / (255 * (259 - contrast));
+          const newGray = factor * (gray - 128) + 128;
+          
+          data[i] = data[i + 1] = data[i + 2] = newGray;
+        }
+        
+        ctx.putImageData(imageData, 0, 0);
+        resolve(canvas.toDataURL('image/jpeg', 0.8));
+      };
+      img.onerror = reject;
+      img.src = imageData;
+    });
+  };
+
+  const processImage = async (imageData) => {
+    if (!workerRef.current) {
+      setError('OCR engine not initialized. Please refresh the page.');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Preprocess the image
+      const processedImage = await preprocessImage(imageData);
+
+      // Set worker parameters
+      await workerRef.current.setParameters({
+        tessedit_pageseg_mode: '1',
+        tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,!?@#$%&*()[]{}:;+\'"-_=<>/\\ ',
+        preserve_interword_spaces: '1',
+        textord_heavy_nr: '1',
+        tessedit_do_invert: '0',
+      });
+
+      // Process the image
+      const result = await workerRef.current.recognize(processedImage);
+
+      if (!result.data.text.trim()) {
+        throw new Error('No text detected. Please try with a clearer image.');
       }
+
+      setText(result.data.text);
+    } catch (err) {
+      console.error('OCR Error:', err);
+      setError('Failed to process image. Please ensure the image is clear and well-lit.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Validate file
+    if (file.size > 5 * 1024 * 1024) {
+      setError('File size should be less than 5MB');
+      return;
+    }
+
+    if (!file.type.match(/image\/(jpeg|png|jpg|bmp|tiff)/)) {
+      setError('Please upload an image file (JPEG, PNG, JPG, BMP, or TIFF)');
+      return;
+    }
+
+    try {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        setImage(e.target.result);
-        processImage(e.target.result);
+      reader.onload = async (e) => {
+        const img = new Image();
+        img.onload = () => {
+          if (img.width < 100 || img.height < 100) {
+            setError('Image is too small. Please upload a larger image.');
+            return;
+          }
+          setImage(e.target.result);
+          processImage(e.target.result);
+        };
+        img.onerror = () => {
+          setError('Error loading image. Please try another file.');
+        };
+        img.src = e.target.result;
       };
       reader.onerror = () => {
-        setError('Error reading file');
+        setError('Error reading file. Please try again.');
       };
       reader.readAsDataURL(file);
+    } catch (err) {
+      console.error('File upload error:', err);
+      setError('Error processing file. Please try again.');
     }
   };
 
@@ -132,27 +265,6 @@ export default function DocumentScanner() {
         setImage(rotatedImage);
         processImage(rotatedImage);
       };
-    }
-  };
-
-  const processImage = async (imageData) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await Tesseract.recognize(
-        imageData,
-        language,
-        {
-          logger: m => console.log(m),
-          tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,!?@#$%&*()[]{}:;+\'"-_=<>/\\ ',
-        }
-      );
-      setText(result.data.text);
-    } catch (err) {
-      setError('Error processing image. Please try again with a clearer image.');
-      console.error('OCR Error:', err);
-    } finally {
-      setLoading(false);
     }
   };
 
