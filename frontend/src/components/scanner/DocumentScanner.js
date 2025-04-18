@@ -17,7 +17,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import ImageIcon from '@mui/icons-material/Image';
-import api from '../../api/axios';
+import { analyzeDocument } from '../../api/documentScanner';
 import DashboardLayout from '../layout/DashboardLayout';
 
 const DocumentScanner = () => {
@@ -44,11 +44,12 @@ const DocumentScanner = () => {
 
       setFile(selectedFile);
       setError(null);
+      setAnalysis(null);
 
       // Create preview for images
       if (selectedFile.type.startsWith('image/')) {
         const reader = new FileReader();
-        reader.onloadend = () => {
+        reader.onload = () => {
           setPreview(reader.result);
         };
         reader.readAsDataURL(selectedFile);
@@ -59,28 +60,26 @@ const DocumentScanner = () => {
   };
 
   const handleAnalyze = async () => {
+    if (!file) {
+      setError('Please upload a document first');
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
+      setAnalysis(null);
 
-      const formData = new FormData();
-      formData.append('document', file);
-
-      console.log('Sending file:', file);
-      const response = await api.post('/document-scanner/analyze', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        onUploadProgress: (progressEvent) => {
-          console.log('Upload Progress:', Math.round((progressEvent.loaded * 100) / progressEvent.total));
-        }
-      });
-
-      setAnalysis(response.data.analysis);
+      const result = await analyzeDocument(file);
+      
+      if (result.analysis) {
+        setAnalysis(result.analysis);
+      } else {
+        throw new Error('No analysis was generated');
+      }
     } catch (err) {
-      const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Error processing document';
-      console.error('Document analysis error:', errorMessage);
-      setError(errorMessage);
+      console.error('Document analysis error:', err);
+      setError(err.message || 'Error analyzing document. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -95,19 +94,7 @@ const DocumentScanner = () => {
 
   return (
     <DashboardLayout>
-      {/* Main content area with specific margin to prevent sidebar overlap */}
-      <Box 
-        component="main" 
-        sx={{
-          flexGrow: 1,
-          marginLeft: { xs: '16px', sm: '24px', md: '240px' }, // Adjust based on your sidebar width
-          paddingLeft: { xs: 2, sm: 3, md: 4 },
-          paddingRight: { xs: 2, sm: 3, md: 4 },
-          paddingTop: 4,
-          paddingBottom: 4,
-          maxWidth: '100%'
-        }}
-      >
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         <Typography variant="h4" gutterBottom>
           Legal Document Scanner
         </Typography>
@@ -117,14 +104,13 @@ const DocumentScanner = () => {
 
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
-            {/* Upload Section */}
             <Paper
-              elevation={2}
               sx={{
                 p: 3,
-                height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
+                alignItems: 'center',
+                minHeight: 400,
                 backgroundColor: file ? 'background.paper' : 'grey.50'
               }}
             >
@@ -140,8 +126,7 @@ const DocumentScanner = () => {
                     border: '2px dashed',
                     borderColor: 'grey.300',
                     borderRadius: 1,
-                    p: 3,
-                    minHeight: 300
+                    p: 3
                   }}
                 >
                   <input
@@ -166,7 +151,7 @@ const DocumentScanner = () => {
                   </Typography>
                 </Box>
               ) : (
-                <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <Box sx={{ width: '100%' }}>
                   <Box
                     sx={{
                       display: 'flex',
@@ -194,11 +179,10 @@ const DocumentScanner = () => {
                     <Box
                       sx={{
                         width: '100%',
-                        height: 250,
+                        height: 300,
                         overflow: 'hidden',
                         borderRadius: 1,
-                        mb: 2,
-                        border: `1px solid ${theme.palette.divider}`,
+                        mb: 2
                       }}
                     >
                       <img
@@ -213,33 +197,22 @@ const DocumentScanner = () => {
                     </Box>
                   )}
 
-                  <Box sx={{ mt: 'auto' }}>
-                    <Button
-                      variant="contained"
-                      fullWidth
-                      onClick={handleAnalyze}
-                      disabled={loading}
-                      startIcon={loading && <CircularProgress size={20} />}
-                    >
-                      {loading ? 'Analyzing...' : 'Analyze Document'}
-                    </Button>
-                  </Box>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    onClick={handleAnalyze}
+                    disabled={loading}
+                    startIcon={loading && <CircularProgress size={20} />}
+                  >
+                    {loading ? 'Analyzing...' : 'Analyze Document'}
+                  </Button>
                 </Box>
               )}
             </Paper>
           </Grid>
 
           <Grid item xs={12} md={6}>
-            {/* Analysis Results */}
-            <Paper 
-              elevation={2}
-              sx={{ 
-                p: 3,
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column'
-              }}
-            >
+            <Paper sx={{ p: 3, minHeight: 400 }}>
               <Typography variant="h6" gutterBottom>
                 Analysis Results
               </Typography>
@@ -250,8 +223,23 @@ const DocumentScanner = () => {
                 </Alert>
               )}
 
-              {analysis ? (
-                <Card variant="outlined" sx={{ flexGrow: 1 }}>
+              {loading ? (
+                <Box
+                  sx={{
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <CircularProgress />
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+                    Analyzing document... This may take a few moments
+                  </Typography>
+                </Box>
+              ) : analysis ? (
+                <Card variant="outlined">
                   <CardContent>
                     <Typography variant="h6" color="primary" gutterBottom>
                       Simple Explanation
@@ -264,7 +252,7 @@ const DocumentScanner = () => {
               ) : (
                 <Box
                   sx={{
-                    flexGrow: 1,
+                    height: '100%',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center'
@@ -278,9 +266,10 @@ const DocumentScanner = () => {
             </Paper>
           </Grid>
         </Grid>
-      </Box>
+      </Container>
     </DashboardLayout>
   );
 };
 
 export default DocumentScanner;
+

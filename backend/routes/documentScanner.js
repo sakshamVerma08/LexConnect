@@ -1,37 +1,36 @@
+
 import express from 'express';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import multer from 'multer';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import PDFParser from 'pdf2json';
+import fs from 'fs';
+import Tesseract from 'tesseract.js'; // For OCR
+import poppler from 'pdf-poppler'; // For PDF to image conversion
 
+// Setup __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Load environment variables
 dotenv.config({ path: join(__dirname, '../.env') });
 
-console.log('DocumentScanner Route - Environment variables:', {
-  GEMINI_API_KEY: process.env.GEMINI_API_KEY ? 'Set' : 'Not set'
-});
-import multer from 'multer';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import PDFParser from 'pdf2json';
-import fs from 'fs';
-import path from 'path';
+// Check if the Gemini API key is set
+console.log('Gemini API Key:', process.env.GEMINI_API_KEY ? 'Set' : 'Not Set');
 
 const router = express.Router();
 
-// Configure multer for file upload
-// Create uploads directory if it doesn't exist
-if (!fs.existsSync('uploads')) {
-  fs.mkdirSync('uploads');
+// Ensure 'uploads' directory exists
+const uploadDir = 'uploads';
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
 }
 
+// Multer config
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadDir = 'uploads';
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir);
-    }
     cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
@@ -42,93 +41,188 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
-    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+    const allowedTypes = ['application/pdf'];
     if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Invalid file type. Only PDF, JPEG, and PNG are allowed.'));
+      cb(new Error('Invalid file type. Only PDF is supported.'));
     }
   },
   limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB limit
+    fileSize: 5 * 1024 * 1024 // 5MB
   }
 });
 
 // Initialize Gemini AI
-const initializeGeminiAI = () => {
+let genAI;
+try {
   if (!process.env.GEMINI_API_KEY) {
     throw new Error('GEMINI_API_KEY is not set in environment variables');
   }
-  return new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-};
-
-let genAI;
-try {
-  genAI = initializeGeminiAI();
+  genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  console.log('Gemini AI initialized:', !!genAI);
 } catch (error) {
-  console.error('Failed to initialize Gemini AI:', error);
+  console.error('Failed to initialize Gemini AI:', error.message);
 }
 
-// Stub PDF extraction for now
+// ✅ PDF text extraction (for text-based PDFs)
 const extractTextFromPDF = async (pdfPath) => {
-  console.log('Stub PDF extraction for path:', pdfPath);
-  return 'This is sentence one. This is sentence two. This is sentence three. This is sentence four.';
-};
-// NOTE: Replace with real PDF extraction once integration is fixed
+  return new Promise((resolve, reject) => {
+    const pdfParser = new PDFParser();
 
-// Process document with Gemini AI - STUB for now
+    pdfParser.on('pdfParser_dataError', errData => {
+      reject(errData.parserError);
+    });
+
+    pdfParser.on('pdfParser_dataReady', () => {
+      const rawText = pdfParser.getRawTextContent();
+      resolve(rawText);
+    });
+
+    pdfParser.loadPDF(pdfPath);
+  });
+};
+
+// ✅ OCR text extraction (for image-based PDFs)
+const extractTextWithOCR = async (pdfPath) => {
+  try {
+    console.log('Running OCR on PDF:', pdfPath);
+
+    if (!fs.existsSync(pdfPath)) {
+      throw new Error(`File not found at path: ${pdfPath}`);
+    }
+
+    // Convert PDF to images
+    const imagePaths = await convertPDFToImages(pdfPath);
+
+    let extractedText = '';
+    for (const imagePath of imagePaths) {
+      console.log('Running OCR on image:', imagePath);
+      const { data } = await Tesseract.recognize(imagePath, 'eng', {
+        logger: (m) => console.log('OCR Progress:', m),
+      });
+      extractedText += data.text + '\n';
+    }
+
+    console.log('OCR extracted text:', extractedText);
+    return extractedText;
+  } catch (error) {
+    console.error('OCR error:', error.message);
+    throw new Error('Failed to extract text using OCR');
+  }
+};
+
+// ✅ Convert PDF to images
+const convertPDFToImages = async (pdfPath) => {
+  const outputDir = 'uploads/images';
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+
+  const options = {
+    format: 'jpeg',
+    out_dir: outputDir,
+    out_prefix: 'page',
+    page: null, // Convert all pages
+  };
+
+  try {
+    console.log('Converting PDF to images...');
+    await poppler.convert(pdfPath, options);
+    console.log('PDF converted to images in:', outputDir);
+    return fs.readdirSync(outputDir).map((file) => `${outputDir}/${file}`);
+  } catch (error) {
+    console.error('Error converting PDF to images:', error.message);
+    throw new Error('Failed to convert PDF to images');
+  }
+};
+
+// ✅ Use Gemini AI to summarize PDF content
 const processWithGemini = async (text) => {
-  console.log('Returning stub summary');
-  const sentences = text.match(/[^.!?]+[.!?]+/g) || [];
-  return sentences.slice(0, 3).join(' ');
-};
+  try {
+    if (!genAI) throw new Error('Gemini AI not initialized');
 
-// NOTE: Replace stub above with actual API call once integration is fixed.
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+
+    // Simple test prompt
+    const prompt = `Summarize: ${text}`;
+
+    console.log('Sending prompt to Gemini AI:', prompt);
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const summary = await response.text();
+
+    console.log('Gemini AI summary:', summary);
+
+    return summary;
+  } catch (error) {
+    console.error('Gemini AI error:', error.message);
+    console.error('Full error details:', error);
+    throw new Error('Failed to process text with Gemini AI.');
+  }
+};
 
 // @route   POST api/document-scanner/analyze
-// @desc    Analyze document using Gemini AI
+// @desc    Analyze uploaded PDF with Gemini AI
 // @access  Public
 router.post('/analyze', upload.single('document'), async (req, res) => {
-  console.log('Starting document analysis...');
-  console.log('Request body:', req.body);
-  console.log('Request file:', req.file);
-  let text = '';
-  console.log('Received file:', req.file);
-  console.log('GEMINI_API_KEY:', process.env.GEMINI_API_KEY);
   try {
     if (!req.file || !req.file.path) {
-      console.error('No file uploaded or file path missing');
-      fs.writeFileSync('debug.log', `Request: ${JSON.stringify({ body: req.body, file: req.file }, null, 2)}`);
-      return res.status(400).json({ message: 'No file uploaded or invalid file' });
-      return res.status(400).json({ message: 'No file uploaded' });
+      return res.status(400).json({ message: 'No file uploaded or file path missing' });
     }
 
-    console.log('Processing file:', req.file);
-    if (req.file.mimetype === 'application/pdf') {
-      text = await extractTextFromPDF(req.file.path);
-    } else {
-      // For images, we'll need to use OCR (you can integrate Tesseract or cloud OCR)
-      // For now, we'll return an error for images
-      return res.status(400).json({ message: 'Image processing not implemented yet' });
+    console.log('Uploaded file exists:', req.file.path);
+
+    let text = await extractTextFromPDF(req.file.path);
+    if (!text || text.trim().length === 0) {
+      console.log('Text extraction failed, attempting OCR...');
+      text = await extractTextWithOCR(req.file.path);
     }
 
-    console.log('Extracted text:', { length: text.length, preview: text.substring(0, 100) });
+    if (!text || text.trim().length === 0) {
+      return res.status(400).json({ message: 'Failed to extract text from the document.' });
+    }
+
     const analysis = await processWithGemini(text);
-
-    // Clean up uploaded file
     fs.unlinkSync(req.file.path);
 
     res.json({ analysis });
-  } catch (err) {
-    console.error('Document analysis error:', err);
-    console.error('Stack trace:', err.stack);
-    fs.writeFileSync('error.log', `Error: ${err.message}\nStack: ${err.stack}\nRequest: ${JSON.stringify({ body: req.body, file: req.file }, null, 2)}`);
-    res.status(500).json({
-      message: 'Error processing document',
-      error: err.message,
-      details: err.stack
-    });
+  } catch (error) {
+    console.error('Analysis error:', error.message);
+    res.status(500).json({ message: 'Error processing document', error: error.message });
   }
 });
 
+// @route   GET api/document-scanner/list-models
+// @desc    List available Gemini AI models
+// @access  Public
+router.get('/list-models', async (req, res) => {
+  try {
+    if (!genAI) throw new Error('Gemini AI not initialized');
+    const models = await genAI.listModels();
+    res.json(models);
+  } catch (error) {
+    console.error('Error listing models:', error.message);
+    res.status(500).json({ error: 'Failed to list models', message: error.message });
+  }
+});
+
+// Test OCR functionality
+const testOCR = async () => {
+  try {
+    const result = await Tesseract.recognize('path/to/sample.pdf', 'eng', {
+      logger: (m) => console.log('OCR Progress:', m),
+    });
+    console.log('OCR Result:', result.data.text);
+  } catch (error) {
+    console.error('OCR Test Error:', error.message);
+  }
+};
+
+testOCR();
+
+const summary = await processWithGemini("This is a test document.");
+
 export default router;
+
