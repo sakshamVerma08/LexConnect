@@ -9,7 +9,6 @@ import {
   Alert,
   Card,
   CardContent,
-  Divider,
   IconButton,
   useTheme,
   Grid
@@ -96,7 +95,19 @@ const DocumentScanner = () => {
 
   return (
     <DashboardLayout>
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      {/* Main content area with specific margin to prevent sidebar overlap */}
+      <Box 
+        component="main" 
+        sx={{
+          flexGrow: 1,
+          marginLeft: { xs: '16px', sm: '24px', md: '240px' }, // Adjust based on your sidebar width
+          paddingLeft: { xs: 2, sm: 3, md: 4 },
+          paddingRight: { xs: 2, sm: 3, md: 4 },
+          paddingTop: 4,
+          paddingBottom: 4,
+          maxWidth: '100%'
+        }}
+      >
         <Typography variant="h4" gutterBottom>
           Legal Document Scanner
         </Typography>
@@ -108,12 +119,12 @@ const DocumentScanner = () => {
           <Grid item xs={12} md={6}>
             {/* Upload Section */}
             <Paper
+              elevation={2}
               sx={{
                 p: 3,
+                height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
-                alignItems: 'center',
-                minHeight: 400,
                 backgroundColor: file ? 'background.paper' : 'grey.50'
               }}
             >
@@ -129,7 +140,8 @@ const DocumentScanner = () => {
                     border: '2px dashed',
                     borderColor: 'grey.300',
                     borderRadius: 1,
-                    p: 3
+                    p: 3,
+                    minHeight: 300
                   }}
                 >
                   <input
@@ -154,7 +166,7 @@ const DocumentScanner = () => {
                   </Typography>
                 </Box>
               ) : (
-                <Box sx={{ width: '100%' }}>
+                <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
                   <Box
                     sx={{
                       display: 'flex',
@@ -182,10 +194,11 @@ const DocumentScanner = () => {
                     <Box
                       sx={{
                         width: '100%',
-                        height: 300,
+                        height: 250,
                         overflow: 'hidden',
                         borderRadius: 1,
-                        mb: 2
+                        mb: 2,
+                        border: `1px solid ${theme.palette.divider}`,
                       }}
                     >
                       <img
@@ -200,15 +213,17 @@ const DocumentScanner = () => {
                     </Box>
                   )}
 
-                  <Button
-                    variant="contained"
-                    fullWidth
-                    onClick={handleAnalyze}
-                    disabled={loading}
-                    startIcon={loading && <CircularProgress size={20} />}
-                  >
-                    {loading ? 'Analyzing...' : 'Analyze Document'}
-                  </Button>
+                  <Box sx={{ mt: 'auto' }}>
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      onClick={handleAnalyze}
+                      disabled={loading}
+                      startIcon={loading && <CircularProgress size={20} />}
+                    >
+                      {loading ? 'Analyzing...' : 'Analyze Document'}
+                    </Button>
+                  </Box>
                 </Box>
               )}
             </Paper>
@@ -216,7 +231,15 @@ const DocumentScanner = () => {
 
           <Grid item xs={12} md={6}>
             {/* Analysis Results */}
-            <Paper sx={{ p: 3, minHeight: 400 }}>
+            <Paper 
+              elevation={2}
+              sx={{ 
+                p: 3,
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column'
+              }}
+            >
               <Typography variant="h6" gutterBottom>
                 Analysis Results
               </Typography>
@@ -228,7 +251,7 @@ const DocumentScanner = () => {
               )}
 
               {analysis ? (
-                <Card variant="outlined">
+                <Card variant="outlined" sx={{ flexGrow: 1 }}>
                   <CardContent>
                     <Typography variant="h6" color="primary" gutterBottom>
                       Simple Explanation
@@ -241,7 +264,7 @@ const DocumentScanner = () => {
               ) : (
                 <Box
                   sx={{
-                    height: '100%',
+                    flexGrow: 1,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center'
@@ -255,7 +278,7 @@ const DocumentScanner = () => {
             </Paper>
           </Grid>
         </Grid>
-      </Container>
+      </Box>
     </DashboardLayout>
   );
 };

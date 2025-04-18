@@ -130,7 +130,7 @@ const Home = () => {
                     <Button
                       variant="contained"
                       size="large"
-                      onClick={() => navigate('/register')}
+                      onClick={() => navigate('/')}
                       sx={{
                         px: 4,
                         py: 1.5,
@@ -512,7 +512,7 @@ const Home = () => {
             <Button
               variant="contained"
               size="large"
-              onClick={() => navigate('/register')}
+              onClick={() => navigate('/')}
               sx={{
                 px: 6,
                 py: 2,
