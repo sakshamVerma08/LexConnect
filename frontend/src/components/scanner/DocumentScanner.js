@@ -127,6 +127,7 @@ const DocumentScanner = () => {
                     borderColor: 'grey.300',
                     borderRadius: 1,
                     p: 3
+                    
                   }}
                 >
                   <input

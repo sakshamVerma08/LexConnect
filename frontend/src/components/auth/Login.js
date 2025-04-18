@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import axios from 'axios';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -28,12 +29,38 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: Implement login logic with backend
+   
+    
     try {
-      // API call will go here
-      navigate('/dashboard');
+      const response = await axios.post("http://localhost:5000/api/auth/login",formData,
+        {
+        headers:{'Content-Type':'application/json'}
+      });
+
+      
+
+
+      if(response.data.token){
+        localStorage.setItem('token',response.data.token);
+
+        if (response.data.user?.role) {
+          localStorage.setItem('userRole', response.data.user.role);
+        }
+      }
+
+     /* const userRole = response.data.user?.role;
+      if (userRole === 'client') {
+        navigate('/client/dashboard');
+      } else if (userRole === 'lawyer') {
+        navigate('/lawyer/dashboard');
+      } else {
+        navigate('/dashboard');
+      }
+        */
+
+      navigate('/client/dashboard');
     } catch (err) {
-      setError(err.response.data.message);
+      setError(err.response?.data?.message || 'An error occurred');
     }
   };
 

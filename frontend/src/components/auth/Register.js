@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import axios from 'axios';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -41,8 +42,14 @@ const Register = () => {
     }
     // TODO: Implement registration logic with backend
     try {
-      // API call will go here
-      navigate('/dashboard');
+      const response = await axios.post("http://localhost:5000/api/auth/register",formData);
+
+      if(response.data.token){
+        localStorage.setItem('token',response.data.token);
+      }
+
+      
+      navigate('/client/dashboard');
     } catch (err) {
       setError(err.response.data.message);
     }

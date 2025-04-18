@@ -380,7 +380,7 @@ export default function DocumentScanner() {
               </Box>
 
               {stream && (
-                <Box sx={{ mb: 3, position: 'relative' }}>
+                <Box sx={{ mb: 3, position: 'relative' , 'width':'100%',height:'100%',display:'flex', flexDirection:'column'}}>
                   <video
                     ref={videoRef}
                     autoPlay
