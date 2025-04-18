@@ -6,11 +6,7 @@ const lawyerProfileSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  barId: {
-    type: String,
-    required: true,
-    unique: true
-  },
+  
   specializations: [{
     type: String,
     required: true
@@ -19,33 +15,20 @@ const lawyerProfileSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  education: [{
-    institution: String,
-    degree: String,
-    year: Number
-  }],
+ 
   proBono: {
     available: {
       type: Boolean,
       default: false
     },
-    casesPerMonth: {
-      type: Number,
-      default: 0
-    }
+    
   },
-  hourlyRate: {
-    type: Number,
-    required: true
-  },
+  
   rating: {
     type: Number,
     default: 0
   },
-  totalReviews: {
-    type: Number,
-    default: 0
-  },
+  
   location: {
     city: String,
     state: String,

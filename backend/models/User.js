@@ -10,16 +10,15 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  role: {
-    type: String,
-    enum: ['client', 'lawyer'],
-    required: true
-  },
+  
   name: {
     type: String,
     required: true
   },
-  phone: String,
+  age:{
+    type:Number,
+
+  },
   createdAt: {
     type: Date,
     default: Date.now

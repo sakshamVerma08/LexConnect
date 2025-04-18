@@ -13,10 +13,26 @@ const router = express.Router();
 router.post(
   '/register',
   [
-    check('name').notEmpty().withMessage('Name is required'),
-    check('email', 'Please include a valid email').isEmail(),
-    check('password').isLength({ min: 6 }).withMessage('Please enter a password with 6 or more characters'),
-    check('role').isIn(['client', 'lawyer']).withMessage('Role is required')
+    check('name').notEmpty().withMessage('Name is required').isLength({min:2}).withMessage('Name must be at least 2 characters long'),
+    check('email')
+      .notEmpty()
+      .withMessage('Email is required')
+      .isEmail()
+      .withMessage('Please enter a valid email')
+      .normalizeEmail(),
+    
+    check('password')
+      .notEmpty()
+      .withMessage('Password is required')
+      .isLength({ min: 6 })
+      .withMessage('Password must be at least 6 characters long'),
+    
+      check('role')
+      .notEmpty()
+      .withMessage('Role is required')
+      .isIn(['client', 'lawyer'])
+      .withMessage('Role must be either client or lawyer')
+  
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -74,8 +90,16 @@ router.post(
 router.post(
   '/login',
   [
-    check('email', 'Please include a valid email').isEmail(),
-    check('password', 'Password is required').exists()
+    check('email')
+      .notEmpty()
+      .withMessage('Email is required')
+      .isEmail()
+      .withMessage('Please enter a valid email')
+      .normalizeEmail(),
+    
+    check('password')
+      .notEmpty()
+      .withMessage('Password is required')
   ],
   async (req, res) => {
     const errors = validationResult(req);
