@@ -1,14 +1,14 @@
 import express from "express";
-import auth from "../middleware/authMiddleware.js";
 import LawyerProfile from "../models/LawyerProfile.js";
 import User from "../models/User.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 // @route   POST api/lawyers/profile
 // @desc    Create or update lawyer profile
 // @access  Private
-router.post("/profile", auth, async (req, res) => {
+router.post("/profile", authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
     if (user.role !== "lawyer") {
@@ -102,7 +102,7 @@ router.get("/profile/:id", async (req, res) => {
 // @route   PUT api/lawyers/rating/:id
 // @desc    Update lawyer rating
 // @access  Private
-router.put("/rating/:id", auth, async (req, res) => {
+router.put("/rating/:id", authMiddleware, async (req, res) => {
   try {
     const profile = await LawyerProfile.findById(req.params.id);
     if (!profile) {
