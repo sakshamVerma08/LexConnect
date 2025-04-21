@@ -1,14 +1,26 @@
 import jwt from "jsonwebtoken";
 import Blacklist from "../models/blacklist.js";
 
-export default (req, res, next) => {
-  const token = req.header.authorization.split(" ")[1];
+export default async (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "No token, authorization denied" });
+  }
+
+  const token = authHeader.split(" ")[1];
 
   if (!token) {
     return res.status(401).json({ message: "No token, authorization denied" });
   }
 
-  const isBlacklisted = Blacklist.findOne({ token });
+  let isBlacklisted;
+
+  try {
+    isBlacklisted = await Blacklist.findOne({ token });
+  } catch (err) {
+    return res.status(500).json({ message: "Server error" });
+  }
 
   if (isBlacklisted) {
     return res

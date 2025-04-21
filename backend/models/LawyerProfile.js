@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const lawyerProfileSchema = new mongoose.Schema({
+export const lawyerProfileSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
