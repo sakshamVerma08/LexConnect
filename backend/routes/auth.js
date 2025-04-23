@@ -6,6 +6,9 @@ import {
   loginController,
   logoutController,
   registerController,
+  lawyerRegisterController,
+  lawyerLoginController,
+  lawyerLogoutController,
 } from "../controllers/auth-controllers.js";
 
 const router = express.Router();
@@ -41,6 +44,14 @@ router.post(
   registerController
 );
 
+// route is /api/auth/lawyer-register
+router.post("/lawyer-register", lawyerRegisterController);
+
+// route is /api/auth/lawyer-login
+router.post("/lawyer-login", lawyerLoginController);
+
+// route is /api/auth/lawyer-logout
+router.post("/lawyer-logout", authMiddleware, lawyerLogoutController);
 // route is /api/auth/login
 router.post(
   "/login",

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Container,
   Paper,
@@ -7,19 +7,19 @@ import {
   Button,
   Box,
   Alert,
-  Link
-} from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import axios from 'axios';
+  Link,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import axios from "axios";
 
 const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const { email, password } = formData;
 
@@ -29,26 +29,25 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-   
-    
+
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/login",formData,
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/login",
+        formData,
         {
-        headers:{'Content-Type':'application/json'}
-      });
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
-      
-
-
-      if(response.data.token){
-        localStorage.setItem('token',response.data.token);
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
 
         if (response.data.user?.role) {
-          localStorage.setItem('userRole', response.data.user.role);
+          localStorage.setItem("userRole", response.data.user.role);
         }
       }
 
-     /* const userRole = response.data.user?.role;
+      /* const userRole = response.data.user?.role;
       if (userRole === 'client') {
         navigate('/client/dashboard');
       } else if (userRole === 'lawyer') {
@@ -58,9 +57,9 @@ const Login = () => {
       }
         */
 
-      navigate('/client/dashboard');
+      navigate("/client/dashboard");
     } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred');
+      setError(err.response?.data?.message || "An error occurred");
     }
   };
 
@@ -71,26 +70,26 @@ const Login = () => {
         sx={{
           marginTop: 8,
           padding: 4,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
         }}
       >
         <Box
           sx={{
-            backgroundColor: 'primary.main',
-            borderRadius: '50%',
+            backgroundColor: "primary.main",
+            borderRadius: "50%",
             padding: 1,
-            marginBottom: 2
+            marginBottom: 2,
           }}
         >
-          <LockOutlinedIcon sx={{ color: 'white' }} />
+          <LockOutlinedIcon sx={{ color: "white" }} />
         </Box>
         <Typography component="h1" variant="h5">
           Sign In
         </Typography>
         {error && (
-          <Alert severity="error" sx={{ width: '100%', mt: 2 }}>
+          <Alert severity="error" sx={{ width: "100%", mt: 2 }}>
             {error}
           </Alert>
         )}
@@ -127,8 +126,8 @@ const Login = () => {
           >
             Sign In
           </Button>
-          <Box sx={{ textAlign: 'center' }}>
-            <Link href="/" variant="body2">
+          <Box sx={{ textAlign: "center" }}>
+            <Link href="/register" variant="body2">
               Don't have an account? Sign Up
             </Link>
           </Box>

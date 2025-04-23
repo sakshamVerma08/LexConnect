@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { validationResult } from "express-validator";
 import User from "../models/User.js";
 import Blacklist from "../models/blacklist.js";
+import LawyerProfile from "../models/LawyerProfile.js";
 
 export const registerController = async (req, res) => {
   const errors = validationResult(req);
@@ -125,3 +126,76 @@ export const logoutController = async (req, res) => {
     return res.status(500).json({ message: "Internal Server error" });
   }
 };
+
+// LAWYER AUTH CONTROLLERS
+
+export const lawyerRegisterController = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const {
+      user,
+      name,
+      specializations,
+      experience,
+      proBono,
+      rating,
+      location,
+      bio,
+      languages,
+      availability,
+    } = req.body;
+
+    const newLawyer = new LawyerProfile({
+      user: user,
+      name,
+      specializations,
+      experience,
+      proBono,
+      rating,
+      location,
+      bio,
+      languages,
+      availability,
+    });
+
+    const existingLawyer = await User.findOne({ email });
+
+    if (existingLawyer) {
+      return res.status(400).json({ message: "Lawyer already exists" });
+    }
+
+    await newLawyer.save();
+
+    jwt.sign(
+      { id: newLawyer._id, role: newLawyer.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" },
+      (err, token) => {
+        if (err) throw err;
+        res.json({
+          message: "Lawyer registered successfully",
+          data: token,
+          success: true,
+        });
+      }
+    );
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const lawyerLoginController = async (req, res) => {
+  try {
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const lawyerLogoutController = async (req, res) => {};

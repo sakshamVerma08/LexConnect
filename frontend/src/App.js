@@ -26,15 +26,21 @@ import ProtectRoute from "./components/auth/ProtectRoute";
 const AppContent = ({ toggleColorMode }) => {
   const location = useLocation();
   const hideNavbar =
-    location.pathname === "/login" || location.pathname === "/";
+    location.pathname === "/" ||
+    location.pathname === "/login" ||
+    location.pathname === "/register" ||
+    location.pathname === "/lawyer-register" ||
+    location.pathname === "/lawyer-login";
 
   return (
     <>
       {!hideNavbar && <Navbar toggleColorMode={toggleColorMode} />}
       <Routes>
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Register />} />
-
+        <Route path="/register" element={<Register />} />
+        {/*<Route path="lawyer-register"  element = {<LawyerRegister/>} />*/}
+        {/* <Route path = "lawyer-login" element={<LawyerLogin/>}/> */}
         <Route
           path="/home"
           element={

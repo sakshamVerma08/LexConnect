@@ -2,6 +2,7 @@ import express from "express";
 import LawyerProfile from "../models/LawyerProfile.js";
 import User from "../models/User.js";
 import authMiddleware from "../middleware/authMiddleware.js";
+import { getLawyerProfile } from "../controllers/lawyer-controllers.js";
 
 const router = express.Router();
 
@@ -63,17 +64,7 @@ router.post("/profile", authMiddleware, async (req, res) => {
 // @route   GET api/lawyers
 // @desc    Get all lawyers
 // @access  Public
-router.get("/", async (req, res) => {
-  try {
-    const lawyers = await LawyerProfile.find()
-      .populate("user", ["name", "email"])
-      .sort({ rating: -1 });
-    res.json(lawyers);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
-  }
-});
+router.get("/get-lawyers", authMiddleware, getLawyerProfile);
 
 // @route   GET api/lawyers/profile/:id
 // @desc    Get lawyer profile by ID
