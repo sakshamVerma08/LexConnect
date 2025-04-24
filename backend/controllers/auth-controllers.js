@@ -133,12 +133,10 @@ export const logoutController = async (req, res) => {
 export const lawyerRegisterController = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res
-      .status(400)
-      .json({
-        message: "Error in validation of request body",
-        errors: errors.array(),
-      });
+    return res.status(400).json({
+      message: "Error in validation of request body",
+      errors: errors.array(),
+    });
   }
 
   try {
@@ -152,15 +150,96 @@ export const lawyerRegisterController = async (req, res) => {
       availability,
       location,
     } = req.body;
-    console.log(
-      "name=" + name + "email=" + email + "\nspecialization=" + specialization
-    );
+
+    const existingLawyer = await Lawyer.findOne({ email });
+
+    if (existingLawyer) {
+      return res
+        .status(400)
+        .json({ message: "This email already exists, please login" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    if (!hashedPassword) {
+      return res
+        .status(400)
+        .json({ message: "Error while generating password" });
+    }
+
+    const newLawyer = new Lawyer({
+      name,
+      email,
+      password: hashedPassword,
+      specialization,
+      experience,
+      location,
+      availability,
+      proBono,
+    });
+
+    await newLawyer.save();
+
+    const payload = { id: newLawyer._id, role: "lawyer" };
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "24h",
+    });
+
+    if (!token) {
+      return res.status(400).json({ message: "Error generating token" });
+    }
+
+    return res.status(200).json({
+      data: token,
+      success: true,
+      message: "Lawyer Signup Successful",
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-export const lawyerLoginController = async (req, res) => {};
+export const lawyerLoginController = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res
+      .status(400)
+      .json({ message: "Error in validation", errors: errors.array() });
+  }
 
-export const lawyerLogoutController = async (req, res) => {};
+  try {
+    const { email, password } = req.body;
+
+    const existingLawyer = await Lawyer.findOne({ email }).select("+password");
+    if (!existingLawyer) {
+      return res
+        .status(404)
+        .json({ message: "Email doesn't exist, please sign up" });
+    }
+
+    const isSame = await bcrypt.compare(password, existingLawyer.password);
+
+    if (!isSame) {
+      return res.status(400).json({ message: "Password doesn't match" });
+    }
+
+    const payload = { id: existingLawyer._id, role: "lawyer" };
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "24h",
+    });
+
+    return res
+      .status(200)
+      .json({ data: token, success: true, message: "Lawyer Login successful" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Internal Server error" });
+  }
+};
+
+export const lawyerLogoutController = async (req, res) => {
+  
+};

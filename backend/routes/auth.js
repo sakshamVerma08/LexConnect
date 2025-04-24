@@ -43,39 +43,7 @@ router.post(
   ],
   registerController
 );
-// ******************************************************************
-/* *******************  BELOW ARE LAWYER AUTHENTICATION ROUTES *************/
-// *******************************************************************
-// route is /api/auth/lawyer-register
-router.post(
-  "/lawyer-register",
-  check("name").notEmpty().withMessage("Name is required"),
-  check("email").notEmpty().withMessage("Email is required"),
-  check("password")
-    .notEmpty()
-    .withMessage("Password is required")
-    .isLength({ min: 5 })
-    .withMessage("Password should be atleast 5 characters long"),
 
-  check("specializations")
-    .notEmpty()
-    .withMessage("Mention your specialization"),
-  check("experience")
-    .notEmpty()
-    .withMessage("Please mention your years of experience"),
-
-  check("proBono").notEmpty().withMessage("Please mention whether you will/will not take pro bono cases"),
-  check("availability").notEmpty().withMessage("Please mention your availability status"),
-
-  lawyerRegisterController
-);
-
-// route is /api/auth/lawyer-login
-router.post("/lawyer-login", lawyerLoginController);
-
-// route is /api/auth/lawyer-logout
-router.post("/lawyer-logout", authMiddleware, lawyerLogoutController);
-// route is /api/auth/login
 router.post(
   "/login",
   [
@@ -91,11 +59,9 @@ router.post(
   loginController
 );
 
-// route is /api/auth/logout
 router.post("/logout", authMiddleware, logoutController);
 
-// route is  api/auth/user
-// @access  Private
+
 router.get("/user", authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
@@ -105,5 +71,58 @@ router.get("/user", authMiddleware, async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+// ******************************************************************
+/* *******************  BELOW ARE LAWYER AUTHENTICATION ROUTES *************/
+// *******************************************************************
+// route is /api/auth/lawyer-register
+
+router.post(
+  "/lawyer-register",
+  [
+    check("name").notEmpty().withMessage("Name is required"),
+    check("email").notEmpty().withMessage("Email is required"),
+    check("password")
+      .notEmpty()
+      .withMessage("Password is required")
+      .isLength({ min: 5 })
+      .withMessage("Password should be atleast 5 characters long"),
+
+    check("specialization")
+      .notEmpty()
+      .withMessage("Mention your specialization"),
+    check("experience")
+      .notEmpty()
+      .withMessage("Please mention your years of experience"),
+
+    check("proBono")
+      .notEmpty()
+      .withMessage(
+        "Please mention whether you will/will not take pro bono cases"
+      ),
+    check("availability")
+      .notEmpty()
+      .withMessage("Please mention your availability status"),
+  ],
+  lawyerRegisterController
+);
+
+// route is /api/auth/lawyer-login
+router.post(
+  "/lawyer-login",
+  [
+    check("email").notEmpty().withMessage("Email is required"),
+    check("password").notEmpty().withMessage("Password is required"),
+  ],
+  lawyerLoginController
+);
+
+// route is /api/auth/lawyer-logout
+router.post("/lawyer-logout", authMiddleware, lawyerLogoutController);
+// route is /api/auth/login
+
+// route is /api/auth/logout
+
+// route is  api/auth/user
+// @access  Private
 
 export default router;
