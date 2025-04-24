@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Container,
@@ -26,6 +26,7 @@ import {
   ArrowForward,
 } from "@mui/icons-material";
 import { motion } from "framer-motion";
+import axios from "axios";
 
 // Helper function to lighten colors
 const lightenColor = (color, percent) => {
@@ -52,6 +53,7 @@ const FindLawyers = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [lawyers, setLawyers] = useState([]);
 
   const categories = [
     { label: "All", value: "all" },
@@ -62,244 +64,27 @@ const FindLawyers = () => {
     { label: "ProBono", value: "probono" },
   ];
 
-  const lawyers = [
-    /**
-     * Paste one or more documents here
-     */
-    {
-      name: "Aarav Sharma",
-      email: "aarav.sharma@example.com",
-      specialization: "Criminal Law",
-      experience: 7,
-      rating: 4.5,
-      location: "Delhi",
-      proBono: true,
-    },
+  const getLawyers = async () => {
+    const response = await axios.get(
+      "http://localhost:5000/api/lawyers/get-lawyers",
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
 
-    {
-      _id: {
-        $oid: "6801bb02f2929f8bf4addf3d",
-      },
-      name: "Diya Mehta",
-      email: "diya.mehta@example.com",
-      specialization: "Corporate Law",
-      experience: 10,
-      rating: 4.7,
-      location: "Mumbai",
-    },
-    {
-      _id: {
-        $oid: "6801bb02f2929f8bf4addf3e",
-      },
-      name: "Kabir Verma",
-      email: "kabir.verma@example.com",
-      specialization: "Family Law",
-      experience: 5,
-      rating: 4.2,
-      location: "Bangalore",
-    },
-    {
-      _id: {
-        $oid: "6801bb02f2929f8bf4addf3f",
-      },
-      name: "Nisha Reddy",
-      email: "nisha.reddy@example.com",
-      specialization: "Civil Law",
-      experience: 12,
-      rating: 4.6,
-      location: "Hyderabad",
-      proBono: true,
-    },
-    {
-      _id: {
-        $oid: "6801bb02f2929f8bf4addf40",
-      },
-      name: "Rahul Singh",
-      email: "rahul.singh@example.com",
-      specialization: "IP Law",
-      experience: 8,
-      rating: 4.4,
-      location: "Chennai",
-    },
-    {
-      _id: {
-        $oid: "6801bb02f2929f8bf4addf41",
-      },
-      name: "Tanya Patel",
-      email: "tanya.patel@example.com",
-      specialization: "Environmental Law",
-      experience: 6,
-      rating: 4.3,
-      location: "Ahmedabad",
-    },
-    {
-      _id: {
-        $oid: "6801bb02f2929f8bf4addf42",
-      },
-      name: "Siddharth Nair",
-      email: "siddharth.nair@example.com",
-      specialization: "Tax Law",
-      experience: 11,
-      rating: 4.5,
-      location: "Kochi",
-    },
-    {
-      _id: {
-        $oid: "6801bb02f2929f8bf4addf43",
-      },
-      name: "Ishita Das",
-      email: "ishita.das@example.com",
-      specialization: "Labour Law",
-      experience: 4,
-      rating: 4.1,
-      location: "Kolkata",
-    },
-    {
-      _id: {
-        $oid: "6801bb02f2929f8bf4addf44",
-      },
-      name: "Manav Joshi",
-      email: "manav.joshi@example.com",
-      specialization: "Cyber Law",
-      experience: 3,
-      rating: 4,
-      location: "Pune",
-      proBono: true,
-    },
-    {
-      _id: {
-        $oid: "6801bb02f2929f8bf4addf45",
-      },
-      name: "Sneha Roy",
-      email: "sneha.roy@example.com",
-      specialization: "Banking Law",
-      experience: 9,
-      rating: 4.3,
-      location: "Nagpur",
-    },
-    {
-      _id: {
-        $oid: "6801bb02f2929f8bf4addf46",
-      },
-      name: "Rohan Kapoor",
-      email: "rohan.kapoor@example.com",
-      specialization: "Corporate Law",
-      experience: 13,
-      rating: 4.8,
-      location: "Noida",
-    },
-    {
-      _id: {
-        $oid: "6801bb02f2929f8bf4addf47",
-      },
-      name: "Ananya Ghosh",
-      email: "ananya.ghosh@example.com",
-      specialization: "Criminal Law",
-      experience: 6,
-      rating: 4.2,
-      location: "Patna",
-    },
-    {
-      _id: {
-        $oid: "6801bb02f2929f8bf4addf48",
-      },
-      name: "Yash Chauhan",
-      email: "yash.chauhan@example.com",
-      specialization: "Family Law",
-      experience: 7,
-      rating: 4.4,
-      location: "Jaipur",
-    },
-    {
-      _id: {
-        $oid: "6801bb02f2929f8bf4addf49",
-      },
-      name: "Meera Iyer",
-      email: "meera.iyer@example.com",
-      specialization: "Civil Law",
-      experience: 10,
-      rating: 4.5,
-      location: "Bhopal",
-    },
-    {
-      _id: {
-        $oid: "6801bb02f2929f8bf4addf4a",
-      },
-      name: "Arjun Desai",
-      email: "arjun.desai@example.com",
-      specialization: "IP Law",
-      experience: 5,
-      rating: 4.3,
-      location: "Surat",
-    },
-    {
-      _id: {
-        $oid: "6801bb02f2929f8bf4addf4b",
-      },
-      name: "Pooja Bhatt",
-      email: "pooja.bhatt@example.com",
-      specialization: "Labour Law",
-      experience: 4,
-      rating: 4,
-      location: "Lucknow",
-    },
-    {
-      _id: {
-        $oid: "6801bb02f2929f8bf4addf4c",
-      },
-      name: "Vikram Malhotra",
-      email: "vikram.malhotra@example.com",
-      specialization: "Cyber Law",
-      experience: 8,
-      rating: 4.6,
-      location: "Chandigarh",
-    },
-    {
-      _id: {
-        $oid: "6801bb02f2929f8bf4addf4c",
-      },
-      name: "Vikram Malhotra",
-      email: "vikram.malhotra@example.com",
-      specialization: "Cyber Law",
-      experience: 8,
-      rating: 4.6,
-      location: "Chandigarh",
-    },
-    {
-      _id: {
-        $oid: "6801bb02f2929f8bf4addf4d",
-      },
-      name: "Neha Saxena",
-      email: "neha.saxena@example.com",
-      specialization: "Tax Law",
-      experience: 6,
-      rating: 4.1,
-      location: "Indore",
-    },
-    {
-      _id: {
-        $oid: "6801bb02f2929f8bf4addf4e",
-      },
-      name: "Ayaan Khan",
-      email: "ayaan.khan@example.com",
-      specialization: "Banking Law",
-      experience: 9,
-      rating: 4.2,
-      location: "Kanpur",
-    },
-    {
-      _id: {
-        $oid: "6801bb02f2929f8bf4addf4f",
-      },
-      name: "Kiara Sen",
-      email: "kiara.sen@example.com",
-      specialization: "Corporate Law",
-      experience: 11,
-      rating: 4.7,
-      location: "Thane",
-    },
-    // Add more lawyer data as needed
-  ];
+    if (!response.data.success) {
+      console.log("Error while fetching lawyers");
+      return;
+    }
+
+    setLawyers(response.data.data);
+  };
+
+  useEffect(() => {
+    getLawyers();
+  }, []);
 
   // Filter lawyers based on search query and selected category
   const filteredLawyers = lawyers.filter((lawyer) => {
@@ -569,4 +354,3 @@ const FindLawyers = () => {
 };
 
 export default FindLawyers;
-

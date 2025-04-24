@@ -8,7 +8,6 @@ import {
   registerController,
   lawyerRegisterController,
   lawyerLoginController,
-  lawyerLogoutController,
 } from "../controllers/auth-controllers.js";
 
 const router = express.Router();
@@ -60,7 +59,6 @@ router.post(
 );
 
 router.post("/logout", authMiddleware, logoutController);
-
 
 router.get("/user", authMiddleware, async (req, res) => {
   try {
@@ -116,8 +114,6 @@ router.post(
   lawyerLoginController
 );
 
-// route is /api/auth/lawyer-logout
-router.post("/lawyer-logout", authMiddleware, lawyerLogoutController);
 // route is /api/auth/login
 
 // route is /api/auth/logout

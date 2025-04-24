@@ -6,12 +6,10 @@ import { getLawyerProfile } from "../controllers/lawyer-controllers.js";
 
 const router = express.Router();
 
-
 // @route   GET api/lawyers
 // @desc    Get all lawyers
 // @access  Public
 router.get("/get-lawyers", authMiddleware, getLawyerProfile);
-
 
 // @route   GET api/lawyers/profile/:id
 // @desc    Get lawyer profile by ID

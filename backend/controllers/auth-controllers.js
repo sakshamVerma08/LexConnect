@@ -144,6 +144,7 @@ export const lawyerRegisterController = async (req, res) => {
       name,
       email,
       password,
+      rating,
       specialization,
       experience,
       proBono,
@@ -171,6 +172,7 @@ export const lawyerRegisterController = async (req, res) => {
     const newLawyer = new Lawyer({
       name,
       email,
+      rating,
       password: hashedPassword,
       specialization,
       experience,
@@ -199,7 +201,7 @@ export const lawyerRegisterController = async (req, res) => {
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Internal Server Error" });
-  }
+  } 
 };
 
 export const lawyerLoginController = async (req, res) => {
@@ -238,8 +240,4 @@ export const lawyerLoginController = async (req, res) => {
     console.error(err);
     return res.status(500).json({ message: "Internal Server error" });
   }
-};
-
-export const lawyerLogoutController = async (req, res) => {
-  
 };
