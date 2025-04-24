@@ -28,7 +28,6 @@ const AppContent = ({ toggleColorMode }) => {
   const location = useLocation();
   const hideNavbar =
     location.pathname === "/" ||
-    location.pathname=== "/home"||
     location.pathname === "/login" ||
     location.pathname === "/register" ||
     location.pathname === "/lawyer-register" ||
