@@ -3,8 +3,7 @@ import jwt from "jsonwebtoken";
 import { validationResult } from "express-validator";
 import User from "../models/User.js";
 import Blacklist from "../models/blacklist.js";
-import LawyerProfile from "../models/LawyerProfile.js";
-
+import Lawyer from "../models/Lawyer.js";
 export const registerController = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -127,9 +126,40 @@ export const logoutController = async (req, res) => {
   }
 };
 
+// ************************
 // LAWYER AUTH CONTROLLERS
+// ************************
 
-export const lawyerRegisterController = async (req, res) => {};
+export const lawyerRegisterController = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res
+      .status(400)
+      .json({
+        message: "Error in validation of request body",
+        errors: errors.array(),
+      });
+  }
+
+  try {
+    const {
+      name,
+      email,
+      password,
+      specialization,
+      experience,
+      proBono,
+      availability,
+      location,
+    } = req.body;
+    console.log(
+      "name=" + name + "email=" + email + "\nspecialization=" + specialization
+    );
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
 
 export const lawyerLoginController = async (req, res) => {};
 

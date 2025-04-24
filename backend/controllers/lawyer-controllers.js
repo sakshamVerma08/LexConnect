@@ -1,4 +1,4 @@
-import LawyerProfile from "../models/LawyerProfile.js";
+import Lawyer from "../models/Lawyer.js";
 
 // Get the profile of either all lawyers in the DB, or query them on basis of specialization, city, state, country
 export const getLawyerProfile = async (req, res) => {

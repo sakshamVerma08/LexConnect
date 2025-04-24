@@ -1,5 +1,66 @@
 import mongoose from "mongoose";
 
+export const lawyerSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+
+  password: {
+    type: String,
+    required: true,
+    select: false,
+  },
+
+  specialization: {
+    type: String,
+    required: true,
+    enum: [
+      "Criminal Law",
+      "Corporate Law",
+      "Environment Law",
+      "Intellectual property law",
+      "Tax Law",
+      "Labor Law",
+      "Familly Law",
+    ],
+  },
+
+  experience: {
+    type: Number,
+    required: true,
+  },
+
+  proBono: {
+    type: Boolean,
+    required: true,
+    default: true,
+  },
+
+  availability: {
+    type: Boolean,
+    default: true,
+    required: true,
+  },
+
+  bio: {
+    type: String,
+  },
+
+  language: {
+    type: String,
+    default: "English",
+  },
+
+  location: { type: String, required: true },
+});
+
+/*
 export const lawyerProfileSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -70,4 +131,8 @@ export const lawyerProfileSchema = new mongoose.Schema({
   },
 });
 
+
 export default mongoose.model("LawyerProfile", lawyerProfileSchema);
+*/
+
+export default mongoose.model("Lawyer", lawyerSchema);

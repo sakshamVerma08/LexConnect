@@ -43,9 +43,32 @@ router.post(
   ],
   registerController
 );
-
+// ******************************************************************
+/* *******************  BELOW ARE LAWYER AUTHENTICATION ROUTES *************/
+// *******************************************************************
 // route is /api/auth/lawyer-register
-router.post("/lawyer-register", lawyerRegisterController);
+router.post(
+  "/lawyer-register",
+  check("name").notEmpty().withMessage("Name is required"),
+  check("email").notEmpty().withMessage("Email is required"),
+  check("password")
+    .notEmpty()
+    .withMessage("Password is required")
+    .isLength({ min: 5 })
+    .withMessage("Password should be atleast 5 characters long"),
+
+  check("specializations")
+    .notEmpty()
+    .withMessage("Mention your specialization"),
+  check("experience")
+    .notEmpty()
+    .withMessage("Please mention your years of experience"),
+
+  check("proBono").notEmpty().withMessage("Please mention whether you will/will not take pro bono cases"),
+  check("availability").notEmpty().withMessage("Please mention your availability status"),
+
+  lawyerRegisterController
+);
 
 // route is /api/auth/lawyer-login
 router.post("/lawyer-login", lawyerLoginController);

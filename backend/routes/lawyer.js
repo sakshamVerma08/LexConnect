@@ -1,70 +1,17 @@
 import express from "express";
-import LawyerProfile from "../models/LawyerProfile.js";
+import LawyerProfile from "../models/Lawyer.js";
 import User from "../models/User.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import { getLawyerProfile } from "../controllers/lawyer-controllers.js";
 
 const router = express.Router();
 
-// @route   POST api/lawyers/profile
-// @desc    Create or update lawyer profile
-// @access  Private
-router.post("/profile", authMiddleware, async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id);
-    if (user.role !== "lawyer") {
-      return res.status(403).json({ message: "Not authorized" });
-    }
-
-    const {
-      barId,
-      specializations,
-      experience,
-      education,
-      proBono,
-      hourlyRate,
-      location,
-      bio,
-      languages,
-    } = req.body;
-
-    const profileFields = {
-      user: req.user.id,
-      barId,
-      specializations,
-      experience,
-      education,
-      proBono,
-      hourlyRate,
-      location,
-      bio,
-      languages,
-    };
-
-    let profile = await LawyerProfile.findOne({ user: req.user.id });
-
-    if (profile) {
-      profile = await LawyerProfile.findOneAndUpdate(
-        { user: req.user.id },
-        { $set: profileFields },
-        { new: true }
-      );
-    } else {
-      profile = new LawyerProfile(profileFields);
-      await profile.save();
-    }
-
-    res.json(profile);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
-  }
-});
 
 // @route   GET api/lawyers
 // @desc    Get all lawyers
 // @access  Public
 router.get("/get-lawyers", authMiddleware, getLawyerProfile);
+
 
 // @route   GET api/lawyers/profile/:id
 // @desc    Get lawyer profile by ID
