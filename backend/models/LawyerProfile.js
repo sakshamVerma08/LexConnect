@@ -5,33 +5,39 @@ export const lawyerProfileSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  name: { type: String, required: true },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
 
-  
-  specializations: [
-    {
-      type: String,
-      required: true,
-      enum: [
-        "Criminal Law",
-        "Family Law",
-        "Corporate Law",
-        "Intellectual Property Law",
-        "Tax Law",
-        "Labor Law",
-        "Environmental Law",
-      ],
-    },
-  ],
+  specializations: {
+    type: String,
+    required: true,
+    enum: [
+      "Criminal Law",
+      "Family Law",
+      "Corporate Law",
+      "Intellectual Property Law",
+      "Tax Law",
+      "Labor Law",
+      "Environmental Law",
+    ],
+  },
+
   experience: {
     type: Number,
     required: true,
   },
 
   proBono: {
-    available: {
-      type: Boolean,
-      default: false,
-    },
+    type: Boolean,
+    default: true,
   },
 
   rating: {
@@ -42,15 +48,14 @@ export const lawyerProfileSchema = new mongoose.Schema({
   },
 
   location: {
-    city: { type: String, required: true },
-    state: { type: String, required: true },
-    country: { type: String, required: true },
-    default: "",
+    type: String,
+    required: true,
+    default: "Not mentioned",
   },
 
   bio: {
     type: String,
-    default: "",
+    default: "No bio available",
   },
 
   languages: {

@@ -1,4 +1,4 @@
-import LawyerProfile from "../models/LawyerProfile";
+import LawyerProfile from "../models/LawyerProfile.js";
 
 // Get the profile of either all lawyers in the DB, or query them on basis of specialization, city, state, country
 export const getLawyerProfile = async (req, res) => {
@@ -20,6 +20,3 @@ export const getLawyerProfile = async (req, res) => {
     res.status(500).send("Failed to Fetch Lawyers form DB");
   }
 };
-
-
-
