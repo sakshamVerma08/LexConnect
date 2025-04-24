@@ -22,11 +22,13 @@ import DocumentScanner from "./components/scanner/DocumentScanner";
 import FindLawyers from "./components/pages/FindLawyers";
 import LegalChatbot from "./components/pages/LegalChatbot";
 import ProtectRoute from "./components/auth/ProtectRoute";
-
+import LawyerRegister from "./components/auth/LawyerRegister.js";
+import LawyerLogin from "./components/auth/LawyerLogin.js";
 const AppContent = ({ toggleColorMode }) => {
   const location = useLocation();
   const hideNavbar =
     location.pathname === "/" ||
+    location.pathname=== "/home"||
     location.pathname === "/login" ||
     location.pathname === "/register" ||
     location.pathname === "/lawyer-register" ||
@@ -39,8 +41,8 @@ const AppContent = ({ toggleColorMode }) => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        {/*<Route path="lawyer-register"  element = {<LawyerRegister/>} />*/}
-        {/* <Route path = "lawyer-login" element={<LawyerLogin/>}/> */}
+        <Route path="lawyer-register" element={<LawyerRegister />} />
+        <Route path="lawyer-login" element={<LawyerLogin />} />
         <Route
           path="/home"
           element={
