@@ -100,6 +100,8 @@ router.post(
     check("availability")
       .notEmpty()
       .withMessage("Please mention your availability status"),
+
+    check("rating").notEmpty().withMessage("Please mention rating as well"),
   ],
   lawyerRegisterController
 );

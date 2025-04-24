@@ -27,11 +27,11 @@ const LawyerRegister = () => {
     email: "",
     password: "",
     confirmPassword: "",
-    specializations: "",
+    specialization: "",
     experience: "",
     rating: "",
     location: "",
-    languages: "English",
+    language: "English",
     proBono: true,
     availability: true,
   });
@@ -56,6 +56,7 @@ const LawyerRegister = () => {
         "http://localhost:5000/api/auth/lawyer-register",
         formData
       );
+
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
       }
@@ -65,7 +66,7 @@ const LawyerRegister = () => {
     }
   };
 
-  const specializations = [
+  const specialization = [
     "Criminal Law",
     "Family Law",
     "Corporate Law",
@@ -75,7 +76,7 @@ const LawyerRegister = () => {
     "Environmental Law",
   ];
 
-  const languages = [
+  const language = [
     "English",
     "Spanish",
     "French",
@@ -168,12 +169,12 @@ const LawyerRegister = () => {
               <FormControl fullWidth required>
                 <InputLabel>Specialization</InputLabel>
                 <Select
-                  name="specializations"
-                  value={formData.specializations}
+                  name="specialization"
+                  value={formData.specialization}
                   label="Specialization"
                   onChange={handleChange}
                 >
-                  {specializations.map((spec) => (
+                  {specialization.map((spec) => (
                     <MenuItem key={spec} value={spec}>
                       {spec}
                     </MenuItem>
@@ -218,11 +219,11 @@ const LawyerRegister = () => {
                 <InputLabel>Languages</InputLabel>
                 <Select
                   name="languages"
-                  value={formData.languages}
+                  value={formData.language}
                   label="Languages"
                   onChange={handleChange}
                 >
-                  {languages.map((lang) => (
+                  {language.map((lang) => (
                     <MenuItem key={lang} value={lang}>
                       {lang}
                     </MenuItem>

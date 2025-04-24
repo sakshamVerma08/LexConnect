@@ -75,8 +75,11 @@ const FindLawyers = () => {
     );
 
     if (!response.data.success) {
-      console.log("Error while fetching lawyers");
-      return;
+      return (
+        <>
+          <h2 className="text-white">No Lawyers Found !</h2>
+        </>
+      );
     }
 
     setLawyers(response.data.data);

@@ -22,12 +22,12 @@ export const lawyerSchema = new mongoose.Schema({
     required: true,
     enum: [
       "Criminal Law",
+      "Family Law",
       "Corporate Law",
-      "Environment Law",
-      "Intellectual property law",
+      "Intellectual Property Law",
       "Tax Law",
       "Labor Law",
-      "Familly Law",
+      "Environmental Law",
     ],
   },
 
