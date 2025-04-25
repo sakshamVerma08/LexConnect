@@ -40,8 +40,8 @@ const AppContent = ({ toggleColorMode }) => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="lawyer-register" element={<LawyerRegister />} />
-        <Route path="lawyer-login" element={<LawyerLogin />} />
+        <Route path="/lawyer-register" element={<LawyerRegister />} />
+        <Route path="/lawyer-login" element={<LawyerLogin />} />
         <Route
           path="/home"
           element={
