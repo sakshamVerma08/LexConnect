@@ -13,8 +13,9 @@ const router = express.Router();
 router.post("/:clientId/create-case", authMiddleware, createClientCase);
 
 // Get all cases for a particular client
+// not passing the client id here, instead using id from the token to verify the client
 
-router.get("/:clientId/cases", authMiddleware, getClientCases);
+router.get("/get-cases", authMiddleware, getClientCases);
 
 // @route   GET api/cases/:id
 // @desc    Get case by ID

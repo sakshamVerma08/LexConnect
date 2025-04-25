@@ -28,6 +28,7 @@ import LawyerIcon from "@mui/icons-material/Person";
 import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+
 const ClientDashboard = () => {
   const [stats, setStats] = useState({
     activeCases: 0,
@@ -48,33 +49,33 @@ const ClientDashboard = () => {
 
   const [clientId, setClientId] = useState("");
 
+  const getClientCases = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/api/cases/get-cases",
+
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      setMyCases(response.data?.data || []);
+    } catch (err) {
+      console.error("Error in fetching cases: ", err.message);
+    }
+  };
   useEffect(() => {
     // TODO: Fetch client's dashboard data
+    getClientCases();
     // Mock data
     setStats({
       activeCases: 2,
       completedCases: 3,
       assignedLawyers: 2,
     });
-
-    setMyCases([
-      {
-        id: 1,
-        title: "Property Dispute Resolution",
-        lawyer: "Jane Smith",
-        status: "inProgress",
-        type: "paid",
-        updatedAt: "2023-04-15",
-      },
-      {
-        id: 2,
-        title: "Will Creation",
-        lawyer: "Pending Assignment",
-        status: "open",
-        type: "proBono",
-        updatedAt: "2023-04-14",
-      },
-    ]);
   }, []);
 
   /******* SETTING THE CURRENT CLIENT'S ID FOR CASE CREATION */
@@ -85,10 +86,8 @@ const ClientDashboard = () => {
       try {
         const decodedToken = jwtDecode(token);
 
-        console.log("Decoded Token: ", decodedToken);
         if (decodedToken.user.id) {
           setClientId(decodedToken.user.id);
-          console.log("Client ID set successful", clientId);
         } else {
           console.error("Token does not contain client ID");
         }
@@ -129,7 +128,6 @@ const ClientDashboard = () => {
     // TODO: Submit new case to backend
 
     try {
-      console.log("CLIENT ID = ", clientId);
       const response = await axios.post(
         `http://localhost:5000/api/cases/${
           clientId ? clientId : ""
@@ -234,7 +232,7 @@ const ClientDashboard = () => {
             </Typography>
             <List>
               {myCases.map((case_, index) => (
-                <React.Fragment key={case_.id}>
+                <React.Fragment key={case_._id}>
                   {index > 0 && <Divider />}
                   <ListItem
                     sx={{

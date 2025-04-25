@@ -1,5 +1,6 @@
 import Case from "../models/Case.js";
 import User from "../models/User.js";
+import jwt from "jsonwebtoken";
 
 export const createClientCase = async (req, res) => {
   try {
@@ -51,13 +52,20 @@ export const createClientCase = async (req, res) => {
 };
 export const getClientCases = async (req, res) => {
   try {
-    const id = req.params.clientId;
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ message: "Not Authorized " });
+    }
+
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    const id = decodedToken.user.id;
+
     if (!id) {
       return res.status(403).json({ message: "ID not received for client" });
     }
 
-    const cases = Case.find({ client: id });
-    if (!cases) {
+    const cases = await Case.find({ client: id });
+    if (!cases || cases.length === 0) {
       return res
         .status(404)
         .json({ message: "No cases found for this client" });
