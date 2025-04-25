@@ -19,6 +19,7 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import ImageIcon from '@mui/icons-material/Image';
 import { analyzeDocument } from '../../api/documentScanner';
 import DashboardLayout from '../layout/DashboardLayout';
+import logger from '../../utils/logger';
 
 const DocumentScanner = () => {
   const theme = useTheme();
@@ -46,7 +47,6 @@ const DocumentScanner = () => {
       setError(null);
       setAnalysis(null);
 
-      // Create preview for images
       if (selectedFile.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = () => {
@@ -78,7 +78,7 @@ const DocumentScanner = () => {
         throw new Error('No analysis was generated');
       }
     } catch (err) {
-      console.error('Document analysis error:', err);
+      logger.error('Document analysis error:', err);
       setError(err.message || 'Error analyzing document. Please try again.');
     } finally {
       setLoading(false);
@@ -94,15 +94,58 @@ const DocumentScanner = () => {
 
   return (
     <DashboardLayout>
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        <Typography variant="h4" gutterBottom>
-          Legal Document Scanner
-        </Typography>
-        <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 4 }}>
-          Upload your legal document and get an easy-to-understand explanation
-        </Typography>
+      <Container 
+        maxWidth="lg" 
+        sx={{ 
+          py: 4, 
+          px: { xs: 2, sm: 3, md: 4 },
+          ml: { md: '240px' },
+          width: { md: 'calc(100% - 240px)' }
+        }}
+      >
+        <Box sx={{ 
+          textAlign: 'center', 
+          mb: 6,
+          position: 'relative',
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            bottom: -16,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '60px',
+            height: '4px',
+            background: 'linear-gradient(90deg, #2196F3, #21CBF3)',
+            borderRadius: '2px'
+          }
+        }}>
+          <Typography 
+            variant="h4" 
+            sx={{ 
+              fontWeight: 700,
+              mb: 2,
+              background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
+            }}
+          >
+            Legal Document Scanner
+          </Typography>
+          <Typography 
+            variant="subtitle1" 
+            sx={{ 
+              color: 'text.secondary',
+              maxWidth: '600px',
+              mx: 'auto',
+              lineHeight: 1.6
+            }}
+          >
+            Upload your legal document and get an easy-to-understand explanation of its contents
+          </Typography>
+        </Box>
 
-        <Grid container spacing={3}>
+        <Grid container spacing={4}>
           <Grid item xs={12} md={6}>
             <Paper
               sx={{
@@ -111,7 +154,10 @@ const DocumentScanner = () => {
                 flexDirection: 'column',
                 alignItems: 'center',
                 minHeight: 400,
-                backgroundColor: file ? 'background.paper' : 'grey.50'
+                backgroundColor: file ? 'background.paper' : 'grey.50',
+                boxShadow: theme.shadows[3],
+                borderRadius: 2,
+                ml: { md: 4 }
               }}
             >
               {!file ? (
@@ -127,7 +173,6 @@ const DocumentScanner = () => {
                     borderColor: 'grey.300',
                     borderRadius: 1,
                     p: 3
-                    
                   }}
                 >
                   <input
@@ -203,7 +248,7 @@ const DocumentScanner = () => {
                     fullWidth
                     onClick={handleAnalyze}
                     disabled={loading}
-                    startIcon={loading && <CircularProgress size={20} />}
+                    startIcon={loading ? <CircularProgress size={20} /> : null}
                   >
                     {loading ? 'Analyzing...' : 'Analyze Document'}
                   </Button>
@@ -213,7 +258,15 @@ const DocumentScanner = () => {
           </Grid>
 
           <Grid item xs={12} md={6}>
-            <Paper sx={{ p: 3, minHeight: 400 }}>
+            <Paper 
+              sx={{ 
+                p: 3, 
+                minHeight: 400,
+                boxShadow: theme.shadows[3],
+                borderRadius: 2,
+                mr: { md: 4 }
+              }}
+            >
               <Typography variant="h6" gutterBottom>
                 Analysis Results
               </Typography>

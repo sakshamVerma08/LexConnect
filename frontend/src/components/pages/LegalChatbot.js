@@ -88,6 +88,30 @@ export default function LegalChatbot() {
         }
     };
 
+    useEffect(() => {
+        let isSubscribed = true;
+
+        const fetchInitialMessages = async () => {
+            try {
+                // Your fetch logic here
+                if (isSubscribed) {
+                    // Update state only if component is still mounted
+                    setMessages(/* your messages */);
+                }
+            } catch (error) {
+                if (isSubscribed) {
+                    setError(error.message);
+                }
+            }
+        };
+
+        fetchInitialMessages();
+
+        return () => {
+            isSubscribed = false;
+        };
+    }, []);
+
     return (
         <Box sx={{ flexGrow: 1 }}>
             {/* App Bar without Theme Toggle */}

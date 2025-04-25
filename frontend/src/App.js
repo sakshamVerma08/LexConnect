@@ -7,9 +7,12 @@ import {
 } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import { Box } from "@mui/material";
+import ErrorBoundary from './components/common/ErrorBoundary';
 
 // Components
 import Navbar from "./components/layout/Navbar";
+import Footer from "./components/layout/Footer";
 import Home from "./components/pages/Home";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
@@ -24,6 +27,7 @@ import LegalChatbot from "./components/pages/LegalChatbot";
 import ProtectRoute from "./components/auth/ProtectRoute";
 import LawyerRegister from "./components/auth/LawyerRegister.js";
 import LawyerLogin from "./components/auth/LawyerLogin.js";
+
 const AppContent = ({ toggleColorMode }) => {
   const location = useLocation();
   const hideNavbar =
@@ -33,90 +37,95 @@ const AppContent = ({ toggleColorMode }) => {
     location.pathname === "/lawyer-register" ||
     location.pathname === "/lawyer-login";
 
-  return (
-    <>
-      {!hideNavbar && <Navbar toggleColorMode={toggleColorMode} />}
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/lawyer-register" element={<LawyerRegister />} />
-        <Route path="/lawyer-login" element={<LawyerLogin />} />
-        <Route
-          path="/home"
-          element={
-            <ProtectRoute>
-              <Home />
-            </ProtectRoute>
-          }
-        />
+  const showFooter = location.pathname === "/" || location.pathname === "/home";
 
-        <Route
-          path="/lawyer/dashboard"
-          element={
-            <ProtectRoute>
-              <LawyerDashboard />
-            </ProtectRoute>
-          }
-        />
-        <Route
-          path="/client/dashboard"
-          element={
-            <ProtectRoute>
-              <ClientDashboard />
-            </ProtectRoute>
-          }
-        />
-        <Route
-          path="/lawyer/profile/:id"
-          element={
-            <ProtectRoute>
-              <LawyerProfile />
-            </ProtectRoute>
-          }
-        />
-        <Route
-          path="/cases"
-          element={
-            <ProtectRoute>
-              <CaseList />
-            </ProtectRoute>
-          }
-        />
-        <Route
-          path="/lawyers"
-          element={
-            <ProtectRoute>
-              <FindLawyers />
-            </ProtectRoute>
-          }
-        />
-        <Route
-          path="/case/:id"
-          element={
-            <ProtectRoute>
-              <CaseDetails />
-            </ProtectRoute>
-          }
-        />
-        <Route
-          path="/document-scanner"
-          element={
-            <ProtectRoute>
-              <DocumentScanner />
-            </ProtectRoute>
-          }
-        />
-        <Route
-          path="/legal-chatbot"
-          element={
-            <ProtectRoute>
-              <LegalChatbot toggleColorMode={toggleColorMode} />{" "}
-            </ProtectRoute>
-          }
-        />
-      </Routes>
-    </>
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      {!hideNavbar && <Navbar toggleColorMode={toggleColorMode} />}
+      <Box sx={{ flex: 1 }}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/lawyer-register" element={<LawyerRegister />} />
+          <Route path="/lawyer-login" element={<LawyerLogin />} />
+          <Route
+            path="/home"
+            element={
+              <ProtectRoute>
+                <Home />
+              </ProtectRoute>
+            }
+          />
+
+          <Route
+            path="/lawyer/dashboard"
+            element={
+              <ProtectRoute>
+                <LawyerDashboard />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/client/dashboard"
+            element={
+              <ProtectRoute>
+                <ClientDashboard />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/lawyer/profile/:id"
+            element={
+              <ProtectRoute>
+                <LawyerProfile />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/cases"
+            element={
+              <ProtectRoute>
+                <CaseList />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/lawyers"
+            element={
+              <ProtectRoute>
+                <FindLawyers />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/case/:id"
+            element={
+              <ProtectRoute>
+                <CaseDetails />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/document-scanner"
+            element={
+              <ProtectRoute>
+                <DocumentScanner />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/legal-chatbot"
+            element={
+              <ProtectRoute>
+                <LegalChatbot toggleColorMode={toggleColorMode} />{" "}
+              </ProtectRoute>
+            }
+          />
+        </Routes>
+      </Box>
+      {showFooter && <Footer />}
+    </Box>
   );
 };
 
@@ -228,12 +237,14 @@ function App() {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
-        <AppContent toggleColorMode={toggleColorMode} />
-      </Router>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router>
+          <AppContent toggleColorMode={toggleColorMode} />
+        </Router>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }
 

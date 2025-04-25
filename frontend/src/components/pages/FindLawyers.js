@@ -27,6 +27,7 @@ import {
 } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 // Helper function to lighten colors
 const lightenColor = (color, percent) => {
@@ -54,6 +55,7 @@ const FindLawyers = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [lawyers, setLawyers] = useState([]);
+  const navigate = useNavigate();
 
   const categories = [
     { label: "All", value: "all" },
@@ -65,29 +67,44 @@ const FindLawyers = () => {
   ];
 
   const getLawyers = async () => {
-    const response = await axios.get(
-      "http://localhost:5000/api/lawyers/get-lawyers",
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        // If no token, redirect to login
+        navigate("/login");
+        return;
       }
-    );
 
-    if (!response.data.success) {
-      return (
-        <>
-          <h2 className="text-white">No Lawyers Found !</h2>
-        </>
+      const response = await axios.get(
+        "http://localhost:5000/api/lawyers/get-lawyers",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
-    }
 
-    setLawyers(response.data.data);
+      if (response.data.success) {
+        setLawyers(response.data.data);
+      } else {
+        console.error("Failed to fetch lawyers:", response.data.message);
+        setLawyers([]);
+      }
+    } catch (error) {
+      console.error("Error fetching lawyers:", error);
+      if (error.response?.status === 401) {
+        // Token expired or invalid, redirect to login
+        localStorage.removeItem("token");
+        navigate("/login");
+      } else {
+        setLawyers([]);
+      }
+    }
   };
 
   useEffect(() => {
     getLawyers();
-  }, []);
+  }, [navigate, searchQuery, selectedCategory]);
 
   // Filter lawyers based on search query and selected category
   const filteredLawyers = lawyers.filter((lawyer) => {

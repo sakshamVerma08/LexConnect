@@ -56,10 +56,12 @@ const Navbar = ({ toggleColorMode }) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        console.error("No token found, cannot log out");
+        console.error("No token found");
+        navigate("/login");
         return;
       }
-      const response = await axios.post(
+
+      await axios.post(
         "http://localhost:5000/api/auth/logout",
         {},
         {
@@ -70,14 +72,15 @@ const Navbar = ({ toggleColorMode }) => {
         }
       );
 
-      if (response.status === 200) {
-        localStorage.removeItem("token");
-        navigate("/login");
-        console.log("Logout Successful");
-        handleMenuClose();
-      }
+      // Clear local storage and redirect regardless of API response
+      localStorage.removeItem("token");
+      navigate("/login");
+      handleMenuClose();
     } catch (err) {
-      console.error("Logout Failed", err);
+      console.error("Logout error:", err);
+      // Even if the API call fails, we should still clear the token and redirect
+      localStorage.removeItem("token");
+      navigate("/login");
       handleMenuClose();
     }
   };

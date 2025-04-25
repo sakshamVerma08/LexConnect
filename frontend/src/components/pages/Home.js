@@ -29,6 +29,7 @@ import {
   Category,
 } from "@mui/icons-material";
 import { motion } from "framer-motion";
+import AboutUs from "./AboutUs";
 
 const features = [
   {
@@ -374,7 +375,7 @@ const Home = () => {
       </Container>
 
       {/* Features Section */}
-      <Container maxWidth="lg" sx={{ py: { xs: 8, md: 12 } }}>
+      <Container>
         <Fade in timeout={1500}>
           <Box>
             <Typography
@@ -504,62 +505,11 @@ const Home = () => {
         </Fade>
       </Container>
 
-      {/* CTA Section */}
-      <Box
-        sx={{
-          background:
-            theme.palette.mode === "light"
-              ? "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)"
-              : "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
-          py: { xs: 8, md: 12 },
-        }}
-      >
-        <Container maxWidth="md">
-          <Card
-            sx={{
-              p: { xs: 4, md: 6 },
-              textAlign: "center",
-              background:
-                theme.palette.mode === "light"
-                  ? "rgba(255, 255, 255, 0.8)"
-                  : "rgba(30, 41, 59, 0.8)",
-              backdropFilter: "blur(10px)",
-            }}
-          >
-            <Typography
-              variant="h3"
-              sx={{
-                mb: 3,
-                fontWeight: 700,
-              }}
-            >
-              Ready to Get Started?
-            </Typography>
-            <Typography
-              variant="h6"
-              sx={{
-                mb: 4,
-                color: "text.secondary",
-              }}
-            >
-              Join thousands of clients and lawyers who trust LexConnect for
-              their legal needs.
-            </Typography>
-            <Button
-              variant="contained"
-              size="large"
-              onClick={() => navigate("/")}
-              sx={{
-                px: 6,
-                py: 2,
-                fontSize: "1.1rem",
-              }}
-            >
-              Create Your Account
-            </Button>
-          </Card>
-        </Container>
-      </Box>
+      {/* Spacing before About Us Section */}
+      <Box sx={{ py: { xs: 6, md: 8 } }} />
+
+      {/* About Us Section */}
+      <AboutUs />
     </Box>
   );
 };
