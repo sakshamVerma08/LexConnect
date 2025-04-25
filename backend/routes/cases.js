@@ -2,53 +2,19 @@ import express from "express";
 import auth from "../middleware/authMiddleware.js";
 import Case from "../models/Case.js";
 import User from "../models/User.js";
-
+import authMiddleware from "../middleware/authMiddleware.js";
+import {
+  createClientCase,
+  getClientCases,
+} from "../controllers/cases-controller.js";
 const router = express.Router();
 
-// @route   POST api/cases
-// @desc    Create a new case
-// @access  Private
-router.post("/", auth, async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id);
-    if (user.role !== "client") {
-      return res.status(403).json({ message: "Only clients can create cases" });
-    }
+// Create a case for the logged in client
+router.post("/:clientId/create-case", authMiddleware, createClientCase);
 
-    const { title, description, category, type, budget } = req.body;
+// Get all cases for a particular client
 
-    const newCase = new Case({
-      client: req.user.id,
-      title,
-      description,
-      category,
-      type,
-      budget: type === "paid" ? budget : 0,
-    });
-
-    const case_ = await newCase.save();
-    res.json(case_);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
-  }
-});
-
-// @route   GET api/cases
-// @desc    Get all cases
-// @access  Public
-router.get("/", async (req, res) => {
-  try {
-    const cases = await Case.find()
-      .populate("client", ["name"])
-      .populate("lawyer", ["name"])
-      .sort({ createdAt: -1 });
-    res.json(cases);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
-  }
-});
+router.get("/:clientId/cases", authMiddleware, getClientCases);
 
 // @route   GET api/cases/:id
 // @desc    Get case by ID

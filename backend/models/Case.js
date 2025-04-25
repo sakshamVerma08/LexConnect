@@ -1,52 +1,54 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const caseSchema = new mongoose.Schema({
   client: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    ref: "User",
+    required: true,
   },
   lawyer: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: "Lawyer",
   },
   title: {
     type: String,
-    required: true
+    required: true,
   },
   description: {
     type: String,
-    required: true
+    required: true,
   },
   category: {
     type: String,
-    required: true
+    required: true,
   },
   type: {
     type: String,
-    enum: ['proBono', 'paid'],
-    required: true
+    enum: ["proBono", "paid"],
+    required: true,
   },
   status: {
     type: String,
-    enum: ['open', 'assigned', 'inProgress', 'completed', 'closed'],
-    default: 'open'
+    enum: ["open", "assigned", "inProgress", "completed", "closed"],
+    default: "open",
   },
   budget: {
-    type: Number
+    type: Number,
   },
-  documents: [{
-    name: String,
-    url: String
-  }],
+  documents: [
+    {
+      name: String,
+      url: String,
+    },
+  ],
   createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   updatedAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
-export default mongoose.model('Case', caseSchema);
+export default mongoose.model("Case", caseSchema);
