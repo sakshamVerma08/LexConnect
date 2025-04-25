@@ -93,10 +93,8 @@ export default function LegalChatbot() {
 
         const fetchInitialMessages = async () => {
             try {
-                // Your fetch logic here
                 if (isSubscribed) {
-                    // Update state only if component is still mounted
-                    setMessages(/* your messages */);
+                    setMessages([]); // Initialize with empty array
                 }
             } catch (error) {
                 if (isSubscribed) {
@@ -178,7 +176,7 @@ export default function LegalChatbot() {
                                 : 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
                         }}
                     >
-                        {messages.map((message, index) => (
+                        {messages && messages.map((message, index) => (
                             <Box
                                 key={index}
                                 sx={{
