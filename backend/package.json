@@ -7,8 +7,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "postinstall": "npm rebuild",
-    "build": "echo 'No build step required'"
+    "build": "npm install && npm rebuild",
+    "postinstall": "npm rebuild"
   },
   "dependencies": {
     "@google/generative-ai": "^0.2.1",
@@ -29,7 +29,8 @@
     "nodemon": "^2.0.22"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
   },
   "cacheDirectories": [
     "node_modules"
