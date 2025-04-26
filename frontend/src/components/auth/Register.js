@@ -25,12 +25,11 @@ const Register = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    role: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { name, email, password, confirmPassword, role } = formData;
+  const { name, email, password, confirmPassword } = formData;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -60,20 +59,13 @@ const Register = () => {
         name,
         email,
         password,
-        role
+        role: 'client'
       });
 
       if (response.data.token) {
-        // Store token and role in localStorage
         localStorage.setItem('token', response.data.token);
-        localStorage.setItem('userRole', role);
-
-        // Redirect based on role
-        if (role === 'lawyer') {
-          navigate('/lawyer/dashboard');
-        } else {
-          navigate('/client/dashboard');
-        }
+        localStorage.setItem('userRole', 'client');
+        navigate('/client/dashboard');
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed. Please try again.');
@@ -163,22 +155,6 @@ const Register = () => {
             onChange={handleChange}
             disabled={loading}
           />
-          <FormControl fullWidth margin="normal">
-            <InputLabel id="role-label">Role</InputLabel>
-            <Select
-              labelId="role-label"
-              id="role"
-              name="role"
-              value={role}
-              label="Role"
-              onChange={handleChange}
-              required
-              disabled={loading}
-            >
-              <MenuItem value="client">Client</MenuItem>
-              <MenuItem value="lawyer">Lawyer</MenuItem>
-            </Select>
-          </FormControl>
           <Button
             type="submit"
             fullWidth
@@ -187,6 +163,14 @@ const Register = () => {
             disabled={loading}
           >
             {loading ? <CircularProgress size={24} /> : 'Register'}
+          </Button>
+          <Button
+            fullWidth
+            variant="outlined"
+            sx={{ mb: 2 }}
+            onClick={() => navigate('/lawyer-register')}
+          >
+            Sign Up as Lawyer
           </Button>
           <Box sx={{ textAlign: 'center' }}>
             <Link href="/login" variant="body2">

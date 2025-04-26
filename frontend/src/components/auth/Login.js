@@ -126,6 +126,14 @@ const Login = () => {
           >
             Sign In
           </Button>
+          <Button
+            fullWidth
+            variant="outlined"
+            sx={{ mb: 2 }}
+            onClick={() => navigate('/lawyer-login')}
+          >
+            Sign In as Lawyer
+          </Button>
           <Box sx={{ textAlign: "center" }}>
             <Link href="/register" variant="body2">
               Don't have an account? Sign Up

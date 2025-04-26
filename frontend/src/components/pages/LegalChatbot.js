@@ -88,6 +88,28 @@ export default function LegalChatbot() {
         }
     };
 
+    useEffect(() => {
+        let isSubscribed = true;
+
+        const fetchInitialMessages = async () => {
+            try {
+                if (isSubscribed) {
+                    setMessages([]); // Initialize with empty array
+                }
+            } catch (error) {
+                if (isSubscribed) {
+                    setError(error.message);
+                }
+            }
+        };
+
+        fetchInitialMessages();
+
+        return () => {
+            isSubscribed = false;
+        };
+    }, []);
+
     return (
         <Box sx={{ flexGrow: 1 }}>
             {/* App Bar without Theme Toggle */}
@@ -154,7 +176,7 @@ export default function LegalChatbot() {
                                 : 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
                         }}
                     >
-                        {messages.map((message, index) => (
+                        {messages && messages.map((message, index) => (
                             <Box
                                 key={index}
                                 sx={{
