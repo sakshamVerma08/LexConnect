@@ -8,7 +8,7 @@ import {
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { Box } from "@mui/material";
-import ErrorBoundary from './components/common/ErrorBoundary';
+import ErrorBoundary from "./components/common/ErrorBoundary";
 
 // Components
 import Navbar from "./components/layout/Navbar";
@@ -40,87 +40,27 @@ const AppContent = ({ toggleColorMode }) => {
   const showFooter = location.pathname === "/" || location.pathname === "/home";
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       {!hideNavbar && <Navbar toggleColorMode={toggleColorMode} />}
       <Box sx={{ flex: 1 }}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="lawyer-register" element={<LawyerRegister />} />
-          <Route path="lawyer-login" element={<LawyerLogin />} />
-          <Route
-            path="/home"
-            element={
-              <ProtectRoute>
-                <Home />
-              </ProtectRoute>
-            }
-          />
+          <Route path="/lawyer-register" element={<LawyerRegister />} />
+          <Route path="/lawyer-login" element={<LawyerLogin />} />
+          <Route path="/home" element={<Home />} />
 
-          <Route
-            path="/lawyer/dashboard"
-            element={
-              <ProtectRoute>
-                <LawyerDashboard />
-              </ProtectRoute>
-            }
-          />
-          <Route
-            path="/client/dashboard"
-            element={
-              <ProtectRoute>
-                <ClientDashboard />
-              </ProtectRoute>
-            }
-          />
-          <Route
-            path="/lawyer/profile/:id"
-            element={
-              <ProtectRoute>
-                <LawyerProfile />
-              </ProtectRoute>
-            }
-          />
-          <Route
-            path="/cases"
-            element={
-              <ProtectRoute>
-                <CaseList />
-              </ProtectRoute>
-            }
-          />
-          <Route
-            path="/lawyers"
-            element={
-              <ProtectRoute>
-                <FindLawyers />
-              </ProtectRoute>
-            }
-          />
-          <Route
-            path="/case/:id"
-            element={
-              <ProtectRoute>
-                <CaseDetails />
-              </ProtectRoute>
-            }
-          />
-          <Route
-            path="/document-scanner"
-            element={
-              <ProtectRoute>
-                <DocumentScanner />
-              </ProtectRoute>
-            }
-          />
+          <Route path="/lawyer/dashboard" element={<LawyerDashboard />} />
+          <Route path="/client/dashboard" element={<ClientDashboard />} />
+          <Route path="/lawyer/profile/:id" element={<LawyerProfile />} />
+          <Route path="/cases" element={<CaseList />} />
+          <Route path="/lawyers" element={<FindLawyers />} />
+          <Route path="/case/:id" element={<CaseDetails />} />
+          <Route path="/document-scanner" element={<DocumentScanner />} />
           <Route
             path="/legal-chatbot"
-            element={
-              <ProtectRoute>
-                <LegalChatbot toggleColorMode={toggleColorMode} />{" "}
-              </ProtectRoute>
-            }
+            element={<LegalChatbot toggleColorMode={toggleColorMode} />}
           />
         </Routes>
       </Box>
