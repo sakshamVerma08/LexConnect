@@ -7,6 +7,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
+    "build": "npm install && npm rebuild",
     "postinstall": "npm rebuild"
   },
   "dependencies": {
@@ -29,6 +30,10 @@
     "nodemon": "^2.0.22"
   },
   "engines": {
-    "node": ">=16.0.0"
-  }
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
+  },
+  "cacheDirectories": [
+    "node_modules"
+  ]
 }

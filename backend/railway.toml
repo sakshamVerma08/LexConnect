@@ -1,0 +1,18 @@
+[build]
+builder = "nixpacks"
+buildCommand = "npm install && npm run build"
+installCommand = "npm install"
+
+[deploy]
+startCommand = "npm start"
+healthcheckPath = "/"
+healthcheckTimeout = 100
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 10
+
+[env]
+NODE_ENV = "production"
+PORT = "3000"
+
+[phases.setup]
+nixPkgs = ["nodejs-16_x", "npm"] 
