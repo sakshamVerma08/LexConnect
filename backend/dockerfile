@@ -1,0 +1,32 @@
+#builder stage
+
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+
+RUN apt-get update && \
+    apt-get install -y build-essential python3 make g++ && \
+    npm ci && \
+    npm rebuild && \
+    rm -rf /var/lib/apt/lists/*
+
+
+COPY . .
+
+#production stage
+
+FROM node:20-apline
+
+WORKDIR /app
+
+RUN npm ci --omit=dev
+
+COPY -from=builder /app ./
+
+EXPOSE 3000
+
+
+CMD ["npm","start"]
+
