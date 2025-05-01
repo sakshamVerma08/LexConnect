@@ -7,8 +7,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "build": "npm install && npm rebuild",
-    "postinstall": "npm rebuild || exit 0"
+    "build": "npm install --omit=dev && npm rebuild"
   },
   "dependencies": {
     "@google/generative-ai": "^0.2.1",
