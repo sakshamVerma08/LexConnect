@@ -17,28 +17,7 @@ router.post("/:clientId/create-case", authMiddleware, createClientCase);
 
 router.get("/get-cases", authMiddleware, getClientCases);
 
-// @route   GET api/cases/:id
-// @desc    Get case by ID
-// @access  Public
-router.get("/:id", async (req, res) => {
-  try {
-    const case_ = await Case.findById(req.params.id)
-      .populate("client", ["name"])
-      .populate("lawyer", ["name"]);
 
-    if (!case_) {
-      return res.status(404).json({ message: "Case not found" });
-    }
-
-    res.json(case_);
-  } catch (err) {
-    console.error(err.message);
-    if (err.kind === "ObjectId") {
-      return res.status(404).json({ message: "Case not found" });
-    }
-    res.status(500).send("Server Error");
-  }
-});
 
 // @route   PUT api/cases/:id/assign
 // @desc    Assign a lawyer to a case

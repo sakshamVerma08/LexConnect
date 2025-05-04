@@ -70,7 +70,6 @@ const FindLawyers = () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        // If no token, redirect to login
         navigate("/login");
         return;
       }
@@ -100,6 +99,10 @@ const FindLawyers = () => {
         setLawyers([]);
       }
     }
+  };
+
+  const handleViewProfile = (lawyerID) => {
+    navigate(`/lawyer/profile/${lawyerID}`);
   };
 
   useEffect(() => {
@@ -359,6 +362,7 @@ const FindLawyers = () => {
                             "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
                         },
                       }}
+                      // onClick={handleViewProfile(lawyer._id)}
                     >
                       View Profile
                     </Button>

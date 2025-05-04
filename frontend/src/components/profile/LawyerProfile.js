@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Paper,
@@ -14,53 +14,37 @@ import {
   ListItem,
   ListItemText,
   Card,
-  CardContent
-} from '@mui/material';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import SchoolIcon from '@mui/icons-material/School';
-import WorkIcon from '@mui/icons-material/Work';
-import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
-import { useParams } from 'react-router-dom';
-
+  CardContent,
+} from "@mui/material";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import SchoolIcon from "@mui/icons-material/School";
+import WorkIcon from "@mui/icons-material/Work";
+import VolunteerActivismIcon from "@mui/icons-material/VolunteerActivism";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 const LawyerProfile = () => {
   const { id } = useParams();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // TODO: Fetch lawyer profile from backend
-    // This is mock data
-    setProfile({
-      user: {
-        name: 'John Doe',
-        email: 'john@example.com'
-      },
-      barId: 'BAR123456',
-      specializations: ['Criminal Law', 'Family Law', 'Corporate Law'],
-      experience: 8,
-      education: [
+    try {
+      const response = axios.get(
+        `http://localhost:5000/api/lawyers/profile/${id}`,
         {
-          institution: 'Harvard Law School',
-          degree: 'Juris Doctor',
-          year: 2015
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
-      ],
-      proBono: {
-        available: true,
-        casesPerMonth: 2
-      },
-      hourlyRate: 200,
-      rating: 4.5,
-      totalReviews: 28,
-      location: {
-        city: 'New York',
-        state: 'NY',
-        country: 'USA'
-      },
-      bio: 'Experienced lawyer specializing in criminal and family law with a strong track record of successful cases.',
-      languages: ['English', 'Spanish']
-    });
-    setLoading(false);
+      );
+
+      if (response.data.success) {
+        setProfile(response.data.data);
+      }
+    } catch (err) {
+      console.error(err);
+      return;
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
 
   if (loading) {
@@ -75,8 +59,8 @@ const LawyerProfile = () => {
           <Paper
             sx={{
               p: 3,
-              background: 'linear-gradient(to right, #2196f3, #1976d2)',
-              color: 'white'
+              background: "linear-gradient(to right, #2196f3, #1976d2)",
+              color: "white",
             }}
           >
             <Grid container alignItems="center" spacing={3}>
@@ -85,7 +69,7 @@ const LawyerProfile = () => {
                   sx={{
                     width: 100,
                     height: 100,
-                    bgcolor: 'secondary.main'
+                    bgcolor: "secondary.main",
                   }}
                 >
                   {profile.user.name[0]}
@@ -93,13 +77,13 @@ const LawyerProfile = () => {
               </Grid>
               <Grid item xs>
                 <Typography variant="h4">{profile.user.name}</Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
                   <LocationOnIcon sx={{ mr: 1 }} />
                   <Typography>
                     {`${profile.location.city}, ${profile.location.state}`}
                   </Typography>
                 </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
                   <Rating value={profile.rating} readOnly precision={0.5} />
                   <Typography sx={{ ml: 1 }}>
                     ({profile.totalReviews} reviews)
@@ -107,11 +91,7 @@ const LawyerProfile = () => {
                 </Box>
               </Grid>
               <Grid item>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  size="large"
-                >
+                <Button variant="contained" color="secondary" size="large">
                   Contact Lawyer
                 </Button>
               </Grid>
@@ -126,9 +106,9 @@ const LawyerProfile = () => {
               About
             </Typography>
             <Typography paragraph>{profile.bio}</Typography>
-            
+
             <Divider sx={{ my: 3 }} />
-            
+
             <Typography variant="h6" gutterBottom>
               Specializations
             </Typography>

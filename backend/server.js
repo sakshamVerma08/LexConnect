@@ -20,7 +20,7 @@ console.log("Environment variables loaded:", {
 import authRoutes from "./routes/auth.js";
 import lawyerRoutes from "./routes/lawyer.js";
 import caseRoutes from "./routes/cases.js";
-import documentScannerRoutes from "./routes/documentScanner.js";
+// import documentScannerRoutes from "./routes/documentScanner.js";
 
 const app = express();
 
@@ -52,7 +52,7 @@ mongoose
 app.use("/api/auth", authRoutes);
 app.use("/api/lawyers", lawyerRoutes);
 app.use("/api/cases", caseRoutes);
-app.use("/api/document-scanner", documentScannerRoutes);
+// app.use("/api/document-scanner", documentScannerRoutes);
 
 // Root route
 app.get("/", (req, res) => {

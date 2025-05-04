@@ -1,4 +1,4 @@
-
+/*
 import express from 'express';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
@@ -15,7 +15,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Load environment variables
-dotenv.config({ path: join(__dirname, '../.env') });
+// dotenv.config({ path: join(__dirname, '../.env') });
+dotenv.config();
 
 // Check if the Gemini API key is set
 console.log('Gemini API Key:', process.env.GEMINI_API_KEY ? 'Set' : 'Not Set');
@@ -223,6 +224,4 @@ const testOCR = async () => {
 testOCR();
 
 const summary = await processWithGemini("This is a test document.");
-
-export default router;
-
+*/

@@ -49,18 +49,78 @@ const AppContent = ({ toggleColorMode }) => {
           <Route path="/register" element={<Register />} />
           <Route path="/lawyer-register" element={<LawyerRegister />} />
           <Route path="/lawyer-login" element={<LawyerLogin />} />
-          <Route path="/home" element={<Home />} />
+          <Route
+            path="/home"
+            element={
+              <ProtectRoute>
+                <Home />
+              </ProtectRoute>
+            }
+          />
 
-          <Route path="/lawyer/dashboard" element={<LawyerDashboard />} />
-          <Route path="/client/dashboard" element={<ClientDashboard />} />
-          <Route path="/lawyer/profile/:id" element={<LawyerProfile />} />
-          <Route path="/cases" element={<CaseList />} />
-          <Route path="/lawyers" element={<FindLawyers />} />
-          <Route path="/case/:id" element={<CaseDetails />} />
-          <Route path="/document-scanner" element={<DocumentScanner />} />
+          <Route
+            path="/lawyer/dashboard"
+            element={
+              <ProtectRoute>
+                <LawyerDashboard />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/client/dashboard"
+            element={
+              <ProtectRoute>
+                <ClientDashboard />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/lawyer/profile/:id"
+            element={
+              <ProtectRoute>
+                <LawyerProfile />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/cases"
+            element={
+              <ProtectRoute>
+                <CaseList />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/lawyers"
+            element={
+              <ProtectRoute>
+                <FindLawyers />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/case/:id"
+            element={
+              <ProtectRoute>
+                <CaseDetails />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/document-scanner"
+            element={
+              <ProtectRoute>
+                <DocumentScanner />
+              </ProtectRoute>
+            }
+          />
           <Route
             path="/legal-chatbot"
-            element={<LegalChatbot toggleColorMode={toggleColorMode} />}
+            element={
+              <ProtectRoute>
+                <LegalChatbot toggleColorMode={toggleColorMode} />
+              </ProtectRoute>
+            }
           />
         </Routes>
       </Box>
