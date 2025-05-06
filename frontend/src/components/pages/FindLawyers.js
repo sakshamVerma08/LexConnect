@@ -362,7 +362,7 @@ const FindLawyers = () => {
                             "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
                         },
                       }}
-                      // onClick={handleViewProfile(lawyer._id)}
+                      onClick={() => handleViewProfile(lawyer._id)}
                     >
                       View Profile
                     </Button>

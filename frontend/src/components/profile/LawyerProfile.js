@@ -27,9 +27,17 @@ const LawyerProfile = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const editAbout = () => {
+    // Write code to open prompt section to enter about here
+  };
+
+  const editSpecialization = () => {
+    // Write code to open prompt section to enter Specialization here
+  };
+
+  const getLawyerProfile = async () => {
     try {
-      const response = axios.get(
+      const response = await axios.get(
         `http://localhost:5000/api/lawyers/profile/${id}`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -39,12 +47,17 @@ const LawyerProfile = () => {
       if (response.data.success) {
         setProfile(response.data.data);
       }
+
+      console.log("PROFILE =", response.data.data);
     } catch (err) {
       console.error(err);
       return;
     } finally {
       setLoading(false);
     }
+  };
+  useEffect(() => {
+    getLawyerProfile();
   }, [id]);
 
   if (loading) {
@@ -72,21 +85,19 @@ const LawyerProfile = () => {
                     bgcolor: "secondary.main",
                   }}
                 >
-                  {profile.user.name[0]}
+                  {/*Lawyer Image*/}
                 </Avatar>
               </Grid>
               <Grid item xs>
-                <Typography variant="h4">{profile.user.name}</Typography>
+                <Typography variant="h4">{profile?.name}</Typography>
                 <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
                   <LocationOnIcon sx={{ mr: 1 }} />
-                  <Typography>
-                    {`${profile.location.city}, ${profile.location.state}`}
-                  </Typography>
+                  <Typography>{`${profile?.location}`}</Typography>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-                  <Rating value={profile.rating} readOnly precision={0.5} />
+                  <Rating value={profile?.rating} readOnly precision={0.5} />
                   <Typography sx={{ ml: 1 }}>
-                    ({profile.totalReviews} reviews)
+                    ({profile?.rating} reviews)
                   </Typography>
                 </Box>
               </Grid>
@@ -102,31 +113,44 @@ const LawyerProfile = () => {
         {/* Main Content */}
         <Grid item xs={12} md={8}>
           <Paper sx={{ p: 3, mb: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              About
-            </Typography>
-            <Typography paragraph>{profile.bio}</Typography>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Box>
+                {" "}
+                <Typography variant="h6" gutterBottom>
+                  About
+                </Typography>
+                <Typography paragraph>{profile?.bio}</Typography>
+              </Box>
+
+              <Button sx={{ border: "rounded" }} onClick={editAbout}>
+                Add About +{" "}
+              </Button>
+            </Box>
 
             <Divider sx={{ my: 3 }} />
 
-            <Typography variant="h6" gutterBottom>
-              Specializations
-            </Typography>
-            <Box sx={{ mb: 3 }}>
-              {profile.specializations.map((spec) => (
-                <Chip
-                  key={spec}
-                  label={spec}
-                  sx={{ mr: 1, mb: 1 }}
-                  color="primary"
-                />
-              ))}
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Box>
+                <Typography variant="h6" gutterBottom>
+                  Specializations
+                </Typography>
+                <Box sx={{ mb: 3 }}>
+                  <Chip
+                    key={profile?.specialization}
+                    label={profile?.specialization}
+                    sx={{ mr: 1, mb: 1 }}
+                    color="primary"
+                  />
+                </Box>
+              </Box>
+
+              <Button onClick={editSpecialization}>Add Specialization +</Button>
             </Box>
 
             <Typography variant="h6" gutterBottom>
               Education
             </Typography>
-            <List>
+            {/*<List>
               {profile.education.map((edu, index) => (
                 <ListItem key={index}>
                   <ListItemText
@@ -136,7 +160,7 @@ const LawyerProfile = () => {
                   />
                 </ListItem>
               ))}
-            </List>
+            </List>*/}
           </Paper>
         </Grid>
 
@@ -152,14 +176,14 @@ const LawyerProfile = () => {
                   <WorkIcon sx={{ mr: 2 }} />
                   <ListItemText
                     primary="Experience"
-                    secondary={`${profile.experience} years`}
+                    secondary={`${profile?.experience} years`}
                   />
                 </ListItem>
                 <ListItem>
                   <VolunteerActivismIcon sx={{ mr: 2 }} />
                   <ListItemText
                     primary="Pro Bono Cases"
-                    secondary={`${profile.proBono.casesPerMonth} per month`}
+                    secondary={`${profile?.proBono} per month`}
                   />
                 </ListItem>
               </List>
@@ -172,13 +196,13 @@ const LawyerProfile = () => {
                 Rates & Languages
               </Typography>
               <Typography variant="h4" color="primary" gutterBottom>
-                ${profile.hourlyRate}/hr
+                ${profile?.cost}/hr
               </Typography>
               <Divider sx={{ my: 2 }} />
               <Typography variant="subtitle1" gutterBottom>
                 Languages
               </Typography>
-              {profile.languages.map((lang) => (
+              {profile?.languages.map((lang) => (
                 <Chip
                   key={lang}
                   label={lang}

@@ -18,7 +18,7 @@ export const lawyerSchema = new mongoose.Schema({
   },
 
   specialization: {
-    type: String,
+    type: [String],
     required: true,
     enum: [
       "Criminal Law",
@@ -42,6 +42,12 @@ export const lawyerSchema = new mongoose.Schema({
     default: 1,
   },
 
+  cost:{
+    type:Number,
+    default:0,
+  },
+
+ 
   proBono: {
     type: Boolean,
     required: true,
@@ -56,11 +62,12 @@ export const lawyerSchema = new mongoose.Schema({
 
   bio: {
     type: String,
+    default: "No Bio Available.",
   },
 
-  language: {
-    type: String,
-    default: "English",
+  languages: {
+    type: [String],
+    default: ["English", "French"],
   },
 
   location: { type: String, required: true },
